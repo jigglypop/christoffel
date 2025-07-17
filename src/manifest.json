@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "∇·Chat",
+  "name": "Christoffel",
   "version": "0.1.0",
   "description": "AI-powered text transformation assistant",
   "author": "염동환",
@@ -46,24 +46,24 @@
       },
       "description": "Send selected text to AI"
     },
-    "toggle-chat": {
+    "toggle-christoffel": {
       "suggested_key": {
         "default": "Ctrl+Shift+S",
         "mac": "Command+Shift+S"
       },
-      "description": "Toggle chat window"
+      "description": "Toggle Christoffel window"
     },
     "resize-larger": {
       "suggested_key": {
         "default": "Ctrl+Shift+Up"
       },
-      "description": "Make chat window larger"
+      "description": "Make Christoffel window larger"
     },
     "resize-smaller": {
       "suggested_key": {
         "default": "Ctrl+Shift+Down"
       },
-      "description": "Make chat window smaller"
+      "description": "Make Christoffel window smaller"
     }
   },
   "web_accessible_resources": [

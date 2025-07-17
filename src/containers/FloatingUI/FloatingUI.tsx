@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAtom } from 'jotai';
 import styles from './FloatingUI.module.css';
-import { getOpenAIChatCompletion } from '../../services/openai';
+import { getOpenAICompletion } from '../../services/openai';
 import type { FeaturePlugin } from '../../types/features';
 import { BackgroundSelector } from '../../components/BGSelector';
 import { backgrounds } from '../../components/BGSelector/constants';
@@ -22,23 +22,15 @@ const FloatingUI: React.FC<FloatingUIProps> = ({ selectedText, onClose, onExecut
   const [result, setResult] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [activePlugin, setActivePlugin] = useState<string | null>(null);
-  const [_, setIsCtrlPressed] = useState(false);
   const [plugins, setPlugins] = useState<FeaturePlugin[]>([]);
-  const [position, __] = useAtom(floatingPositionAtom);
+  const [position] = useAtom(floatingPositionAtom);
   const [background, setBackground] = useAtom(floatingBackgroundAtom);
   
   const containerRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   
   // 드래그 기능을 위한 useResize 훅 사용
-  const { handleMouseDown, containerRef: resizeContainerRef } = useResize(true); // isFloating = true
-
-  // containerRef 연결
-  useEffect(() => {
-    if (containerRef.current && resizeContainerRef) {
-      resizeContainerRef.current = containerRef.current;
-    }
-  }, [resizeContainerRef]);
+  const { handleMouseDown } = useResize(true);
 
   const truncatedText = selectedText.length > 100 ? `${selectedText.substring(0, 100)}...` : selectedText;
 
@@ -47,13 +39,15 @@ const FloatingUI: React.FC<FloatingUIProps> = ({ selectedText, onClose, onExecut
 
   useEffect(() => {
     const loadPlugins = () => {
-      chrome.runtime.sendMessage({ type: 'GET_ALL_PLUGINS' }, (response) => {
-        if (!chrome.runtime.lastError && response) {
-          // 활성화된 플러그인만 필터링
-          const enabledPlugins = response.filter((p: FeaturePlugin) => p.enabled);
-          setPlugins(enabledPlugins);
-        }
-      });
+      if (chrome?.runtime?.sendMessage) {
+        chrome.runtime.sendMessage({ type: 'GET_ALL_PLUGINS' }, (response) => {
+          if (!chrome.runtime.lastError && response) {
+            // 활성화된 플러그인만 필터링
+            const enabledPlugins = response.filter((p: FeaturePlugin) => p.enabled);
+            setPlugins(enabledPlugins);
+          }
+        });
+      }
     };
 
     loadPlugins();
@@ -65,33 +59,28 @@ const FloatingUI: React.FC<FloatingUIProps> = ({ selectedText, onClose, onExecut
       }
     };
 
-    chrome.storage.onChanged.addListener(handleStorageChange);
+    if (chrome?.storage?.onChanged) {
+      chrome.storage.onChanged.addListener(handleStorageChange);
+    }
 
     return () => {
-      chrome.storage.onChanged.removeListener(handleStorageChange);
+      if (chrome?.storage?.onChanged) {
+        chrome.storage.onChanged.removeListener(handleStorageChange);
+      }
     };
   }, []);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.ctrlKey || e.metaKey) {
-        setIsCtrlPressed(true);
         setIsExpanded(true);
       }
     };
 
-    const handleKeyUp = (e: KeyboardEvent) => {
-      if (!e.ctrlKey && !e.metaKey) {
-        setIsCtrlPressed(false);
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('keyup', handleKeyUp);
+    document.addEventListener('keydown', handleKeyDown);
 
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      window.removeEventListener('keyup', handleKeyUp);
+      document.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
 
@@ -113,10 +102,9 @@ const FloatingUI: React.FC<FloatingUIProps> = ({ selectedText, onClose, onExecut
       const messages: Message[] = [
         { id: '1', role: 'user', content: prompt, timestamp: new Date() }
       ];
-      const response = await getOpenAIChatCompletion(messages);
+      const response = await getOpenAICompletion(messages);
       setResult(response || '응답을 받지 못했습니다.');
     } catch (error) {
-      console.error('Plugin execution failed:', error);
       const errorMessage = error instanceof Error ? error.message : '오류가 발생했습니다.';
       setError(errorMessage);
     } finally {
@@ -212,7 +200,7 @@ const FloatingUI: React.FC<FloatingUIProps> = ({ selectedText, onClose, onExecut
       <div 
         ref={headerRef}
         className={styles.floatingHeader}
-        onMouseDown={handleMouseDown}
+        onMouseDown={(e) => handleMouseDown(e, containerRef.current!)}
         style={{ cursor: 'move' }}
         data-draggable="true"
       >

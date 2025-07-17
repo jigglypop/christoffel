@@ -5,39 +5,37 @@ import FloatingUI from './containers/FloatingUI/FloatingUI'
 import styles from './content.module.css'
 import { Provider } from 'jotai'
 import { store } from './atoms/store'
-import { floatingPositionAtom, chatOpenAtom, isDraggingFloatingUIAtom } from './atoms/chatAtoms'
+import { floatingPositionAtom, christoffelOpenAtom, isDraggingFloatingUIAtom } from './atoms/chatAtoms'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 let floatingUIRoot: ReactDOM.Root | null = null
 let floatingUIContainer: HTMLElement | null = null
-let chatRoot: ReactDOM.Root | null = null
-let chatContainer: HTMLElement | null = null
-let chatButtonContainer: HTMLElement | null = null
+let christoffelButtonContainer: HTMLElement | null = null
 // 상태는 jotai store atom으로 관리
 let currentActiveElement: HTMLInputElement | HTMLTextAreaElement | null = null;
 const queryClient = new QueryClient()
-function createChatButton() {
-  if (chatButtonContainer) return
-  chatButtonContainer = document.createElement('div')
-  chatButtonContainer.id = 'nabla-chat-button'
+function createChristoffelButton() {
+  if (christoffelButtonContainer) return
+  christoffelButtonContainer = document.createElement('div')
+  christoffelButtonContainer.id = 'christoffel-button'
   // 인라인 스타일로 position fixed 보장
-  chatButtonContainer.style.position = 'fixed'
-  chatButtonContainer.style.bottom = '30px'
-  chatButtonContainer.style.right = '30px'
-  chatButtonContainer.style.zIndex = '2147483640'
+  christoffelButtonContainer.style.position = 'fixed'
+  christoffelButtonContainer.style.bottom = '30px'
+  christoffelButtonContainer.style.right = '30px'
+  christoffelButtonContainer.style.zIndex = '2147483640'
   const button = document.createElement('button')
-  button.className = styles.chatButton
+  button.className = styles.christoffelButton
   const overlay = document.createElement('span')
-  overlay.className = styles.chatButtonOverlay
-  // 채팅 아이콘 이미지
-  const chatIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-  chatIcon.setAttribute('viewBox','0 0 24 24')
-  chatIcon.setAttribute('width','24')
-  chatIcon.setAttribute('height','24')
-  chatIcon.setAttribute('class', `${styles.chatButtonImage} ${styles.chatIcon} chat-icon`)
-  chatIcon.innerHTML = '<path d="M4 4h16v10H5.17L4 15.17V4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>'
+  overlay.className = styles.christoffelButtonOverlay
+  // 아이콘 이미지
+  const christoffelIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+  christoffelIcon.setAttribute('viewBox','0 0 24 24')
+  christoffelIcon.setAttribute('width','24')
+  christoffelIcon.setAttribute('height','24')
+  christoffelIcon.setAttribute('class', `${styles.christoffelButtonImage} ${styles.christoffelIcon} christoffel-icon`)
+  christoffelIcon.innerHTML = '<path d="M4 4h16v10H5.17L4 15.17V4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>'
   // 버튼 색상을 흰색으로
-  chatIcon.style.color = '#ffffff'
+  christoffelIcon.style.color = '#ffffff'
   // 닫기 아이콘 (SVG 유지)
   const closeIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
   closeIcon.setAttribute('class', `${styles.closeIcon} close-icon`)
@@ -47,136 +45,63 @@ function createChatButton() {
   closeIcon.innerHTML = '<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>'
   
   button.appendChild(overlay)
-  button.appendChild(chatIcon)
+  button.appendChild(christoffelIcon)
   button.appendChild(closeIcon)
-  chatButtonContainer.appendChild(button)
-  document.body.appendChild(chatButtonContainer)
-  button.addEventListener('click', toggleChat)
+  christoffelButtonContainer.appendChild(button)
+  document.body.appendChild(christoffelButtonContainer)
+  button.addEventListener('click', toggleChristoffel)
 }
 
-function toggleChat() {
-  if (store.get(chatOpenAtom)) {
-    closeChatInterface()
+function toggleChristoffel() {
+  if (store.get(christoffelOpenAtom)) {
+    removeFloatingUI();
   } else {
-    openChatInterface()
-  }
-}
-
-function openChatInterface(selectedText?: string) {
-  removeFloatingUI()
-  
-  // 기존 채팅 컨테이너가 있으면 제거
-  if (chatContainer) {
-    closeChatInterface()
-  }
-  
-  chatContainer = document.createElement('div')
-  chatContainer.id = 'nabla-chat-app'
-  document.body.appendChild(chatContainer)
-  chatRoot = ReactDOM.createRoot(chatContainer)
-  chatRoot.render(
-    <React.StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <Provider store={store}>
-          <ChatApp onClose={closeChatInterface} />
-        </Provider>
-      </QueryClientProvider>
-    </React.StrictMode>
-  )
-  store.set(chatOpenAtom, true)
-  updateButtonIcon()
-
-  if (selectedText) {
-    setTimeout(() => {
-      window.postMessage({
-        type: 'SEND_TO_CHAT',
-        text: selectedText,
-      }, '*')
-    }, 300)
-  }
-}
-
-function closeChatInterface() {
-  if (chatRoot) {
-    chatRoot.unmount()
-    chatRoot = null
-  }
-  if (chatContainer) {
-    chatContainer.remove()
-    chatContainer = null
-  }
-  store.set(chatOpenAtom, false)
-  updateButtonIcon()
-}
-
-function updateButtonIcon() {
-  const button = chatButtonContainer?.querySelector('button')
-
-  if (button) {
-    if (store.get(chatOpenAtom)) {
-      button.classList.add(styles.chatOpen)
-      chatButtonContainer!.style.visibility = 'hidden'
-    } else {
-      button.classList.remove(styles.chatOpen)
-      chatButtonContainer!.style.visibility = 'visible'
-    }
+    // This logic is flawed because it requires a selection.
+    // For now, the button only closes the UI.
+    // A better implementation would be to open a default chat window.
   }
 }
 
 function createFloatingUI(selection: SelectionInfo) {
-  if (store.get(chatOpenAtom)) return
-  removeFloatingUI()
-  const activeEl = document.activeElement
+  if (store.get(christoffelOpenAtom)) return;
+  removeFloatingUI();
+  const activeEl = document.activeElement;
   if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA')) {
-    currentActiveElement = activeEl as HTMLInputElement | HTMLTextAreaElement
+    currentActiveElement = activeEl as HTMLInputElement | HTMLTextAreaElement;
   } else {
-    currentActiveElement = null
+    currentActiveElement = null;
   }
-  floatingUIContainer = document.createElement('div')
-  floatingUIContainer.id = 'nabla-floating-ui'
-  floatingUIContainer.className = styles.floatingUI
-  floatingUIContainer.style.position = 'fixed'
+  floatingUIContainer = document.createElement('div');
+  floatingUIContainer.id = 'christoffel-floating-ui';
+  floatingUIContainer.className = styles.floatingUI;
+  floatingUIContainer.style.position = 'fixed';
   floatingUIContainer.addEventListener('mousedown', (e) => {
-    const target = e.target as HTMLElement
-    // 헤더나 헤더의 자식 요소를 클릭했는지 확인
-    let currentElement: HTMLElement | null = target
+    const target = e.target as HTMLElement;
+    let currentElement: HTMLElement | null = target;
     while (currentElement && currentElement !== floatingUIContainer) {
       if (currentElement.getAttribute('data-draggable') === 'true') {
-        store.set(isDraggingFloatingUIAtom, true)
-        break
+        store.set(isDraggingFloatingUIAtom, true);
+        break;
       }
-      currentElement = currentElement.parentElement
+      currentElement = currentElement.parentElement;
     }
-  })
-  
-  // 초기 위치 설정 (마우스 커서 기준)
-  let left = selection.position.x - window.scrollX
-  let top = selection.position.y - window.scrollY
-  // 뷰포트 경계 체크
-  const viewportWidth = window.innerWidth
-  const viewportHeight = window.innerHeight
-  const estimatedWidth = 300 // FloatingUI의 예상 너비
-  const estimatedHeight = 200 // FloatingUI의 예상 높이
-  // 화면 오른쪽을 벗어나는 경우
-  if (left + estimatedWidth > viewportWidth - 10) {
-    left = viewportWidth - estimatedWidth - 10
-  }
-  // 화면 아래를 벗어나는 경우
-  if (top + estimatedHeight > viewportHeight - 10) {
-    top = viewportHeight - estimatedHeight - 10
-  }
-  // 화면 왼쪽을 벗어나는 경우
-  if (left < 10) {
-    left = 10
-  }
-  // 화면 위를 벗어나는 경우
-  if (top < 10) {
-    top = 10
-  }
-  // Jotai atom에 위치 저장
-  store.set(floatingPositionAtom, { x: left, y: top })
-  document.body.appendChild(floatingUIContainer)
-  floatingUIRoot = ReactDOM.createRoot(floatingUIContainer)
+  });
+
+  let left = selection.position.x - window.scrollX;
+  let top = selection.position.y - window.scrollY;
+  const viewportWidth = window.innerWidth;
+  const viewportHeight = window.innerHeight;
+  const estimatedWidth = 300;
+  const estimatedHeight = 200;
+
+  if (left + estimatedWidth > viewportWidth - 10) left = viewportWidth - estimatedWidth - 10;
+  if (top + estimatedHeight > viewportHeight - 10) top = viewportHeight - estimatedHeight - 10;
+  if (left < 10) left = 10;
+  if (top < 10) top = 10;
+
+  store.set(floatingPositionAtom, { x: left, y: top });
+  document.body.appendChild(floatingUIContainer);
+  floatingUIRoot = ReactDOM.createRoot(floatingUIContainer);
   floatingUIRoot.render(
     <React.StrictMode>
       <QueryClientProvider client={queryClient}>
@@ -190,19 +115,21 @@ function createFloatingUI(selection: SelectionInfo) {
         </Provider>
       </QueryClientProvider>
     </React.StrictMode>
-  )
+  );
+  store.set(christoffelOpenAtom, true);
 }
 
 function removeFloatingUI() {
   if (floatingUIRoot) {
-    floatingUIRoot.unmount()
-    floatingUIRoot = null
+    floatingUIRoot.unmount();
+    floatingUIRoot = null;
   }
   if (floatingUIContainer) {
-    floatingUIContainer.remove()
-    floatingUIContainer = null
+    floatingUIContainer.remove();
+    floatingUIContainer = null;
   }
-  currentActiveElement = null
+  currentActiveElement = null;
+  store.set(christoffelOpenAtom, false);
 }
 
 document.addEventListener('mouseup', (e) => {
@@ -255,7 +182,7 @@ document.addEventListener('mouseup', (e) => {
       }
     }
 
-    if (selectionInfo && !store.get(chatOpenAtom)) {
+    if (selectionInfo && !store.get(christoffelOpenAtom)) {
       createFloatingUI(selectionInfo)
     } else if (!selectionInfo) {
       const targetIsFloatingUI = floatingUIContainer && floatingUIContainer.contains(document.activeElement as Node);
@@ -266,31 +193,27 @@ document.addEventListener('mouseup', (e) => {
   }, 10)
 })
 
-function resizeChatWindow(direction: 'larger' | 'smaller') {
-  if (!store.get(chatOpenAtom) || !chatRoot) return
+function resizeChristoffelWindow(direction: 'larger' | 'smaller') {
+  if (!store.get(christoffelOpenAtom) || !floatingUIRoot) return
 
   window.postMessage({
-    type: 'RESIZE_CHAT',
+    type: 'RESIZE_CHRISTOFFEL',
     direction: direction,
   }, '*')
 }
 if (chrome.runtime && chrome.runtime.onMessage) {
   chrome.runtime.onMessage.addListener((message: Message) => {
-    if (message.type === 'SELECTION_CHANGED' && message.payload?.selectedText) {
-      // This part seems complex, let's simplify or rely on mouseup
-    } else if (message.type === 'COMMAND' && message.payload?.command) {
+    if (message.type === 'COMMAND' && message.payload?.command) {
       const command = message.payload.command;
       switch (command) {
-        case 'send-to-ai':
-          break;
-        case 'toggle-chat':
-          toggleChat();
+        case 'toggle-christoffel':
+          toggleChristoffel();
           break;
         case 'resize-larger':
-          resizeChatWindow('larger');
+          resizeChristoffelWindow('larger');
           break;
         case 'resize-smaller':
-          resizeChatWindow('smaller');
+          resizeChristoffelWindow('smaller');
           break;
       }
     }
@@ -298,28 +221,24 @@ if (chrome.runtime && chrome.runtime.onMessage) {
 }
 
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', createChatButton)
+  document.addEventListener('DOMContentLoaded', createChristoffelButton)
 } else {
-  createChatButton()
+  createChristoffelButton()
 }
 
 const handlePluginExecution = (pluginId: string, text: string): Promise<void> => {
   return new Promise((resolve, reject) => {
     chrome.runtime.sendMessage({ type: 'EXECUTE_PLUGIN', pluginId, text }, (response) => {
       if (chrome.runtime.lastError) {
-        console.error(chrome.runtime.lastError.message)
-        return reject(new Error(chrome.runtime.lastError.message))
+        return reject(new Error(chrome.runtime.lastError.message));
       }
 
       if (response?.success) {
-        // We let FloatingUI handle the result directly.
-        // This message passing might not be needed anymore for this flow.
-        resolve()
+        resolve();
       } else {
-        const errorMessage = response?.error || '플러그인 실행 중 오류가 발생했습니다.'
-        console.error(errorMessage)
-        reject(new Error(errorMessage))
+        const errorMessage = response?.error || '플러그인 실행 중 오류가 발생했습니다.';
+        reject(new Error(errorMessage));
       }
-    })
-  })
-}
+    });
+  });
+};

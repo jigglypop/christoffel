@@ -1,7 +1,3 @@
-/**
- * 농협은행 여신 업무 지원 플러그인
- */
-
 import type { FeaturePlugin, FeatureResult } from '../../types/features'
 import { NH_CONFIG, createNHApiClient } from '../../config'
 
@@ -52,7 +48,6 @@ export const nhLoanPlugin: FeaturePlugin = {
         data: formattedResult
       }
     } catch (error) {
-      console.error('여신 분석 오류:', error)
       return {
         success: false,
         error: error instanceof Error ? error.message : '여신 문서 분석 중 오류가 발생했습니다'

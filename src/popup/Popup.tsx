@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { FeaturePlugin } from '../types/features';
 import styles from './Popup.module.css';
 
@@ -12,7 +12,6 @@ function Popup() {
   useEffect(() => {
     chrome.runtime.sendMessage({ type: 'GET_ALL_PLUGINS' }, (response) => {
       if (chrome.runtime.lastError) {
-        console.error(chrome.runtime.lastError);
         setError('플러그인 목록을 불러오는 데 실패했습니다.');
       } else if (response) {
         setPlugins(response);
@@ -27,20 +26,17 @@ function Popup() {
   }, []);
 
   const handleToggle = (pluginId: string) => {
-    setPlugins(prevPlugins =>
-      prevPlugins.map(p =>
-        p.id === pluginId ? { ...p, enabled: !p.enabled } : p
-      )
-    );
+    const updatePluginState = (enabled: boolean) => 
+      setPlugins(prevPlugins =>
+        prevPlugins.map(p => p.id === pluginId ? { ...p, enabled } : p)
+      );
+    
+    updatePluginState(!plugins.find(p => p.id === pluginId)?.enabled);
+    
     chrome.runtime.sendMessage({ type: 'TOGGLE_PLUGIN', pluginId: pluginId }, (response) => {
       if (chrome.runtime.lastError || !response?.success) {
-        console.error(chrome.runtime.lastError || 'Failed to toggle plugin');
         setError(`플러그인 상태 변경에 실패했습니다.`);
-        setPlugins(prevPlugins =>
-          prevPlugins.map(p =>
-            p.id === pluginId ? { ...p, enabled: !p.enabled } : p
-          )
-        );
+        updatePluginState(plugins.find(p => p.id === pluginId)?.enabled || false);
         setTimeout(() => setError(null), 3000);
       }
     });
@@ -103,21 +99,20 @@ function Popup() {
         <div className={styles.headerContent}>
           <div className={styles.logoSection}>
             <div className={styles.logo}>
-              <svg width="36" height="36" viewBox="0 0 128 128">
-                <rect width="128" height="128" fill="url(#nabla-gradient)" rx="24"/>
+              <svg width="64" height="64" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="128" height="128" fill="url(#christoffel-gradient)" rx="24"/>
+                <path d="M42 90L64 48L86 90M64 48L86 6" stroke="white" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"/>
                 <defs>
-                  <linearGradient id="nabla-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#12c2e9" />
-                    <stop offset="50%" stopColor="#c471ed" />
-                    <stop offset="100%" stopColor="#f64f59" />
+                  <linearGradient id="christoffel-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#5A67D8"/>
+                    <stop offset="100%" stopColor="#886AEA"/>
                   </linearGradient>
                 </defs>
-                <text x="64" y="80" textAnchor="middle" fill="white" fontSize="60" fontFamily="Arial, sans-serif" fontWeight="bold">∇</text>
               </svg>
             </div>
             <div className={styles.titleSection}>
-              <h1>∇·Chat</h1>
-              <span className={styles.version}>v0.1.0</span>
+              <h1>Christoffel</h1>
+              <span className={styles.version}>v{chrome.runtime.getManifest().version}</span>
             </div>
           </div>
         </div>
@@ -210,7 +205,7 @@ function Popup() {
       <footer className={styles.popupFooter}>
         <a href="#" className={styles.footerLink}>도움말</a>
         <span className={styles.separator}>•</span>
-        <a href="https://github.com/nabla-chat/nabla-chat" target="_blank" rel="noopener noreferrer" className={styles.footerLink}>GitHub</a>
+        <a href="https://github.com/your-repo/christoffel" target="_blank" rel="noopener noreferrer" className={styles.footerLink}>GitHub</a>
       </footer>
     </div>
   );

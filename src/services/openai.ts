@@ -45,7 +45,7 @@ export const checkAPIConnection = async (): Promise<boolean> => {
   }
 };
 
-export const getOpenAIChatCompletion = async (messages: Message[]) => {
+export const getOpenAICompletion = async (messages: Message[]) => {
   try {
     const settings = await getAPISettings();
     if (!settings.apiKey) {
@@ -78,15 +78,12 @@ export const getOpenAIChatCompletion = async (messages: Message[]) => {
     }
     return '응답을 받지 못했습니다.';
   } catch (error) {
-    console.error('Error getting AI chat completion:', error);
-    return error instanceof Error ? 
-      `AI 응답 중 오류가 발생했습니다: ${error.message}` : 
-      'AI 응답을 가져오는 중 오류가 발생했습니다.';
+    throw error;
   }
 };
 
 // SSE 스트리밍 지원 함수 (추후 React Query와 함께 사용)
-export const streamOpenAIChatCompletion = async (
+export const streamOpenAICompletion = async (
   messages: Message[], 
   onChunk: (chunk: string) => void,
   onComplete: () => void,
@@ -156,46 +153,5 @@ export const streamOpenAIChatCompletion = async (
     onComplete();
   } catch (error) {
     onError(error instanceof Error ? error : new Error('알 수 없는 오류가 발생했습니다.'));
-  }
-};
-
-export const executePluginWithPrompt = async (prompt: string, text: string) => {
-  const settings = await getAPISettings();
-  const fullPrompt = `${prompt}\n\n[TEXT]:\n${text}`;
-  
-  try {
-    const response = await fetch(settings.endpoint, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${settings.apiKey}`
-      },
-      body: JSON.stringify({
-        model: settings.modelType === 'openai' ? 'gpt-3.5-turbo' : 'claude-3-opus',
-        messages: [
-          { role: 'system', content: 'You are a helpful assistant.' },
-          { role: 'user', content: fullPrompt }
-        ],
-        stream: false
-      })
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.error?.message || `API 요청 실패: ${response.statusText}`);
-    }
-
-    const data = await response.json();
-    
-    if (settings.modelType === 'openai' || settings.modelType === 'custom') {
-      return data.choices?.[0]?.message?.content || '응답을 받지 못했습니다.';
-    } else if (settings.modelType === 'claude') {
-      return data.content?.[0]?.text || '응답을 받지 못했습니다.';
-    }
-    
-    return '응답을 받지 못했습니다.';
-  } catch (error) {
-    console.error('Error executing plugin with prompt:', error);
-    throw error;
   }
 }; 

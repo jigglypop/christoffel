@@ -25,19 +25,15 @@ chrome.runtime.onMessage.addListener((request, _, sendResponse) => {
   }
 
   if (messageType === 'GET_ALL_PLUGINS') {
-    (async () => {
-      const pluginManager = await getPluginManager()
-      sendResponse(pluginManager.getAllPlugins())
-    })()
+    getPluginManager().then(pm => sendResponse(pm.getAllPlugins()))
     return true
   }
 
   if (messageType === 'TOGGLE_PLUGIN') {
-    (async () => {
-      const pluginManager = await getPluginManager()
-      pluginManager.togglePlugin(request.pluginId)
+    getPluginManager().then(pm => {
+      pm.togglePlugin(request.pluginId)
       sendResponse({ success: true })
-    })()
+    })
     return true
   }
 

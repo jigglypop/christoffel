@@ -4,11 +4,7 @@ import './App.css';
 function App() {
   useEffect(() => {
     if (process.env.NODE_ENV === 'development') {
-      import('./content').then(() => {
-        console.log('Content script loaded in development mode');
-      }).catch(err => {
-        console.error('Failed to load content script:', err);
-      });
+      import('./content').catch(() => {});
     }
   }, []);
   return (
