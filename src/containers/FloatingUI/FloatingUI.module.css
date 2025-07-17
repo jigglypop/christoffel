@@ -65,9 +65,9 @@
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 12px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  padding: 8px;
-  min-width: 240px;
-  max-width: 300px;
+  padding: 4px;
+  min-width: 200px;
+  max-width: 250px;
   z-index: 10000;
   animation: slideIn 0.2s ease;
 }
@@ -159,10 +159,9 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
-  padding: 8px 12px;
+  padding: 4px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  min-height: 36px;
+  min-height: 24px;
   cursor: move;
   user-select: none;
 }

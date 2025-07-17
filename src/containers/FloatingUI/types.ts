@@ -4,8 +4,6 @@ export type Message = {
     content: string
     timestamp: Date
 }
-
-
 export interface APISettings {
     modelType: 'openai' | 'claude' | 'custom';
     endpoint: string;

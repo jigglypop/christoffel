@@ -2,16 +2,17 @@
   position: relative;
   margin-right: 12px;
 }
+
 .trafficLights {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-template-rows: repeat(2, 1fr);
-  gap: 6px;
+  display: flex;
+  grid-template-columns: repeat(4, 1fr);
   align-items: center;
 }
+
 .trafficLight {
-  width: 14px;
-  height: 14px;
+  width: 12px;
+  height: 12px;
+  margin: 2px;
   border-radius: 50%;
   border: 1px solid rgba(0, 0, 0, 0.15);
   cursor: pointer;

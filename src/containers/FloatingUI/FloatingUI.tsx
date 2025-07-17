@@ -125,7 +125,6 @@ const FloatingUI: React.FC<FloatingUIProps> = ({ selectedText, onClose, onExecut
   };
 
   const getPromptForPlugin = (plugin: FeaturePlugin, text: string): string => {
-    // 커스텀 프롬프트가 있으면 사용, 없으면 기본 프롬프트 사용
     const promptTemplate = plugin.customPrompt || plugin.defaultPrompt || '다음 텍스트를 처리해주세요: {text}';
     return promptTemplate.replace('{text}', text);
   };
@@ -145,10 +144,8 @@ const FloatingUI: React.FC<FloatingUIProps> = ({ selectedText, onClose, onExecut
       const start = activeElement.selectionStart || 0;
       const end = activeElement.selectionEnd || 0;
       const currentValue = activeElement.value;
-      
       const newValue = currentValue.substring(0, start) + result + currentValue.substring(end);
       activeElement.value = newValue;
-      
       // 이벤트 발생시켜 React 등의 상태 업데이트 트리거
       const event = new Event('input', { bubbles: true });
       activeElement.dispatchEvent(event);
@@ -158,7 +155,6 @@ const FloatingUI: React.FC<FloatingUIProps> = ({ selectedText, onClose, onExecut
       activeElement.setSelectionRange(start + result.length, start + result.length);
     }
   };
-
   const getPluginIcon = (pluginId: string) => {
     switch (pluginId) {
       case 'summarize':
@@ -177,7 +173,6 @@ const FloatingUI: React.FC<FloatingUIProps> = ({ selectedText, onClose, onExecut
   if (plugins.length === 0) {
     return null;
   }
-
   // 컴팩트 모드
   if (!isExpanded) {
     return (
@@ -221,7 +216,6 @@ const FloatingUI: React.FC<FloatingUIProps> = ({ selectedText, onClose, onExecut
         style={{ cursor: 'move' }}
         data-draggable="true"
       >
-        <span className={styles.floatingTitle}>AI Assistant</span>
         <div className={styles.headerActions}>
           <div className={styles.bgSelectorWrapper}>
             <BackgroundSelector background={background} setBackground={setBackground} />

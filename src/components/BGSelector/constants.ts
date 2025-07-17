@@ -14,7 +14,7 @@ export const backgrounds = [
   {
     id: 'gradient2',
     name: 'Ocean Blue',
-    value: 'linear-gradient(135deg, rgba(0, 210, 255, 0.3), rgba(146, 141, 255, 0.3), rgba(255, 0, 189, 0.3))',
+    value: 'linear-gradient(135deg, rgba(21, 36, 39, 0.3), rgba(146, 141, 255, 0.3), rgba(255, 0, 189, 0.3))',
     color: '#00D2FF'
   },
   {
