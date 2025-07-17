@@ -1,0 +1,138 @@
+.App {
+  text-align: center;
+  background-color: #1a1a1a;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  font-size: calc(10px + 2vmin);
+  color: white;
+  padding: 2rem;
+}
+
+.App-header {
+  margin-bottom: 2rem;
+}
+
+.App-header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  color: #e0e0e0;
+}
+
+.dev-note {
+  font-size: 0.9rem;
+  color: #667eea;
+  margin: 0;
+}
+
+.App-main {
+  width: 100%;
+  max-width: 800px;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.test-section {
+  background: #242424;
+  padding: 2rem;
+  border-radius: 12px;
+  text-align: left;
+}
+
+.test-section h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  color: #fff;
+}
+
+.test-text {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #e0e0e0;
+  margin-bottom: 1rem;
+  user-select: text;
+  cursor: text;
+}
+
+.test-text::selection {
+  background: rgba(102, 126, 234, 0.3);
+}
+
+.input-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  background: #242424;
+  padding: 1.5rem;
+  border-radius: 12px;
+}
+
+.input-container label {
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #aaa;
+}
+
+#test-input,
+#test-textarea {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  border: 1px solid #444;
+  background-color: #2a2a2a;
+  color: #f0f0f0;
+  font-size: 1rem;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+#test-input:focus,
+#test-textarea:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+}
+
+#test-textarea {
+  resize: vertical;
+}
+
+.info-section {
+  background: #242424;
+  padding: 2rem;
+  border-radius: 12px;
+  text-align: left;
+}
+
+.info-section h3 {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  color: #fff;
+}
+
+.info-section ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.info-section li {
+  font-size: 0.9rem;
+  color: #ccc;
+  margin-bottom: 0.5rem;
+  padding-left: 1.5rem;
+  position: relative;
+}
+
+.info-section li:before {
+  content: "•";
+  color: #667eea;
+  font-weight: bold;
+  position: absolute;
+  left: 0;
+} 

@@ -1,0 +1,251 @@
+/* 프로필 설정 스타일 */
+.profileSection {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-top: 12px;
+}
+
+.profilePreview {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.profileImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profilePlaceholder {
+  font-size: 36px;
+}
+
+.profileActions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fileInput {
+  display: none;
+}
+
+.uploadButton {
+  padding: 8px 16px;
+  background: rgba(18, 194, 233, 0.2);
+  color: #12c2e9;
+  border: 1px solid #12c2e9;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.uploadButton:hover {
+  background: rgba(18, 194, 233, 0.3);
+}
+
+.removeButton {
+  padding: 8px 16px;
+  background: rgba(255, 107, 107, 0.2);
+  color: #ff6b6b;
+  border: 1px solid #ff6b6b;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.removeButton:hover {
+  background: rgba(255, 107, 107, 0.3);
+}
+
+/* 기존 스타일 */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2147483648;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.modalContent {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+  width: 90%;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow: hidden;
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modalHeader {
+  padding: 20px 24px;
+  border-bottom: 1px solid #e5e5e5;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modalHeader h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.closeButton {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  transition: all 0.15s;
+  color: #666;
+}
+
+.closeButton:hover {
+  background: #f0f0f0;
+  color: #1a1a1a;
+}
+
+.modalBody {
+  padding: 24px;
+  overflow-y: auto;
+  max-height: calc(80vh - 140px);
+}
+
+.formGroup {
+  margin-bottom: 20px;
+}
+
+.label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #1a1a1a;
+  font-size: 14px;
+}
+
+.input,
+.select {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  transition: all 0.15s;
+  background: white;
+}
+
+.input:focus,
+.select:focus {
+  outline: none;
+  border-color: #12c2e9;
+  box-shadow: 0 0 0 3px rgba(18, 194, 233, 0.1);
+}
+
+.hint {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+  color: #666;
+}
+
+.infoBox {
+  background: #f8f9fa;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 24px;
+}
+
+.infoBox p {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  color: #333;
+}
+
+.infoBox p:last-child {
+  margin-bottom: 0;
+}
+
+.modalFooter {
+  padding: 16px 24px;
+  border-top: 1px solid #e5e5e5;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.cancelButton,
+.saveButton {
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  border: none;
+}
+
+.cancelButton {
+  background: #f0f0f0;
+  color: #666;
+}
+
+.cancelButton:hover {
+  background: #e0e0e0;
+  color: #333;
+}
+
+.saveButton {
+  background: linear-gradient(45deg, #12c2e9, #c471ed);
+  color: white;
+}
+
+.saveButton:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(18, 194, 233, 0.3);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+} 
