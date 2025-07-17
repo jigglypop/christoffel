@@ -1,10 +1,5 @@
-import type { Message } from '../containers/ChatApp/types';
-
-interface APISettings {
-  modelType: 'openai' | 'claude' | 'custom';
-  endpoint: string;
-  apiKey: string;
-}
+import type { Message } from "../containers/FloatingUI/types";
+import type { APISettings } from "./types";
 
 // API 설정 가져오기
 const getAPISettings = async (): Promise<APISettings> => {
@@ -105,7 +100,6 @@ export const streamOpenAIChatCompletion = async (
     }
 
     const formattedMessages = messages.map(({ id, timestamp, ...rest }) => rest);
-
     const response = await fetch(settings.endpoint, {
       method: 'POST',
       headers: {

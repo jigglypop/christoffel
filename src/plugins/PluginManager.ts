@@ -107,5 +107,4 @@ class PluginManager {
 }
 
 export const pluginManagerPromise = PluginManager.create();
-
 export const getPluginManager = () => pluginManagerPromise; 

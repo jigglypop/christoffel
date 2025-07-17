@@ -2,7 +2,6 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import type { Message, SelectionInfo } from './types'
 import FloatingUI from './containers/FloatingUI/FloatingUI'
-import ChatApp from './containers/ChatApp/ChatApp'
 import styles from './content.module.css'
 import { Provider } from 'jotai'
 import { store } from './atoms/store'
@@ -126,9 +125,7 @@ function updateButtonIcon() {
 
 function createFloatingUI(selection: SelectionInfo) {
   if (store.get(chatOpenAtom)) return
-
   removeFloatingUI()
-
   const activeEl = document.activeElement
   if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA')) {
     currentActiveElement = activeEl as HTMLInputElement | HTMLTextAreaElement
@@ -139,7 +136,6 @@ function createFloatingUI(selection: SelectionInfo) {
   floatingUIContainer.id = 'nabla-floating-ui'
   floatingUIContainer.className = styles.floatingUI
   floatingUIContainer.style.position = 'fixed'
-  // 드래그 이벤트 감지
   floatingUIContainer.addEventListener('mousedown', (e) => {
     const target = e.target as HTMLElement
     // 헤더나 헤더의 자식 요소를 클릭했는지 확인

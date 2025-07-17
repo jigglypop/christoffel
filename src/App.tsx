@@ -3,9 +3,7 @@ import './App.css';
 
 function App() {
   useEffect(() => {
-    // 개발 모드에서 content script 시뮬레이션
     if (process.env.NODE_ENV === 'development') {
-      // content.tsx의 주요 로직을 여기서 실행
       import('./content').then(() => {
         console.log('Content script loaded in development mode');
       }).catch(err => {
@@ -13,7 +11,6 @@ function App() {
       });
     }
   }, []);
-
   return (
     <div className="App">
       <header className="App-header">
@@ -32,7 +29,6 @@ function App() {
             Select this text to see the floating UI in action.
           </p>
         </div>
-        
         <div className="input-container">
           <label htmlFor="test-input">Input 테스트</label>
           <input
@@ -42,7 +38,6 @@ function App() {
             defaultValue="This is some sample text in an input field. Try rewriting this."
           />
         </div>
-        
         <div className="input-container">
           <label htmlFor="test-textarea">Textarea 테스트</label>
           <textarea

@@ -16,11 +16,9 @@ export const translatePlugin: FeaturePlugin = {
       const result = await getOpenAIChatCompletion([
         { id: '1', role: 'user', content: prompt, timestamp: new Date() }
       ]);
-      
       if (!result) {
         return { success: false, error: 'API로부터 응답을 받지 못했습니다.' };
       }
-      
       return { success: true, data: result };
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.';

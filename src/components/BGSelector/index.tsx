@@ -5,7 +5,7 @@ import type { BGSelector } from './types';
 export function BackgroundSelector({ background, setBackground }: BGSelector) {
   return (
     <div className={styles.backgroundSelector}>
-         <div className={styles.trafficLights}>
+      <div className={styles.trafficLights}>
         {backgrounds.map((bg) => (
           <button 
             key={bg.id}

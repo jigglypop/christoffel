@@ -56,17 +56,14 @@ class SSEClient {
                 }
             } as any
         )
-
         return eventSource
     }
 
     private async processStream(response: Response): Promise<string> {
         const reader = response.body?.getReader()
         if (!reader) throw new Error('No response body')
-
         const decoder = new TextDecoder()
         let result = ''
-
         try {
             while (true) {
                 const { done, value } = await reader.read()

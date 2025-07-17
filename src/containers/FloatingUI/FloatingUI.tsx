@@ -2,12 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useAtom } from 'jotai';
 import styles from './FloatingUI.module.css';
 import { getOpenAIChatCompletion } from '../../services/openai';
-import type { Message } from '../ChatApp/types';
 import type { FeaturePlugin } from '../../types/features';
 import { BackgroundSelector } from '../../components/BGSelector';
 import { backgrounds } from '../../components/BGSelector/constants';
 import { floatingPositionAtom, floatingBackgroundAtom } from '../../atoms/chatAtoms';
 import { useResize } from '../../hooks/useResize';
+import type { Message } from './types';
 
 interface FloatingUIProps {
   selectedText: string;
@@ -22,9 +22,9 @@ const FloatingUI: React.FC<FloatingUIProps> = ({ selectedText, onClose, onExecut
   const [result, setResult] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
   const [activePlugin, setActivePlugin] = useState<string | null>(null);
-  const [isCtrlPressed, setIsCtrlPressed] = useState(false);
+  const [_, setIsCtrlPressed] = useState(false);
   const [plugins, setPlugins] = useState<FeaturePlugin[]>([]);
-  const [position, setPosition] = useAtom(floatingPositionAtom);
+  const [position, __] = useAtom(floatingPositionAtom);
   const [background, setBackground] = useAtom(floatingBackgroundAtom);
   
   const containerRef = useRef<HTMLDivElement>(null);

@@ -26,16 +26,13 @@ export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
     endpoint: DEFAULT_ENDPOINTS.openai,
     apiKey: ''
   });
-
   useEffect(() => {
-    // 저장된 설정 불러오기
     chrome.storage.sync.get(['apiSettings'], (result) => {
       if (result.apiSettings) {
         setSettings(result.apiSettings);
       }
     });
   }, []);
-
   const handleModelTypeChange = (modelType: ModelType) => {
     setSettings({
       ...settings,

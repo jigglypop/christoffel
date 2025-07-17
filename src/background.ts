@@ -9,7 +9,7 @@ chrome.runtime.onInstalled.addListener(() => {
   })
 })
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((request, _, sendResponse) => {
   const messageType = request.type
   if (messageType === 'EXECUTE_PLUGIN') {
     (async () => {
