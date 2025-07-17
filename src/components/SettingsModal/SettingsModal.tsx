@@ -2,11 +2,7 @@ import React, { useState, useEffect } from 'react';
 import styles from './SettingsModal.module.css';
 import { useAtom } from 'jotai';
 import { userProfileAtom } from '../../atoms/chatAtoms';
-
-interface SettingsModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
+import type { SettingsModalProps } from './types';
 
 export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
   const [modelType, setModelType] = useState<'openai' | 'claude' | 'custom'>('openai');

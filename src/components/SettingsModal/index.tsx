@@ -33,6 +33,7 @@ export const SettingsModal = ({ isOpen, onClose }: SettingsModalProps) => {
       }
     });
   }, []);
+
   const handleModelTypeChange = (modelType: ModelType) => {
     setSettings({
       ...settings,

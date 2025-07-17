@@ -173,7 +173,6 @@ const FloatingUI: React.FC<FloatingUIProps> = ({ selectedText, onClose, onExecut
         return null;
     }
   };
-
   // 활성화된 플러그인이 없으면 컴팩트 모드도 표시하지 않음
   if (plugins.length === 0) {
     return null;
@@ -198,11 +197,10 @@ const FloatingUI: React.FC<FloatingUIProps> = ({ selectedText, onClose, onExecut
             <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z"/>
           </svg>
         </button>
-        <span className={styles.tooltip}>AI Assistant</span>
+        <span className={styles.tooltip}>AI 어시스턴트</span>
       </div>
     );
   }
-
   // 확장 모드
   return (
     <div 
