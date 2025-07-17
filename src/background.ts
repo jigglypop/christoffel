@@ -9,6 +9,37 @@ chrome.runtime.onInstalled.addListener(() => {
   })
 })
 
+// 단축키 이벤트 리스너 등록
+chrome.storage.sync.get(['plugin_shortcuts'], (result) => {
+  if (result.plugin_shortcuts) {
+    registerShortcuts(result.plugin_shortcuts);
+  }
+});
+
+// storage 변경 감지하여 단축키 재등록
+chrome.storage.onChanged.addListener((changes, areaName) => {
+  if (areaName === 'sync' && changes.plugin_shortcuts) {
+    const shortcuts = changes.plugin_shortcuts.newValue;
+    if (shortcuts) {
+      registerShortcuts(shortcuts);
+    }
+  }
+});
+
+function registerShortcuts(shortcuts: Record<string, string>) {
+  // content script에 단축키 정보 전달
+  chrome.tabs.query({}, (tabs) => {
+    tabs.forEach(tab => {
+      if (tab.id) {
+        chrome.tabs.sendMessage(tab.id, {
+          type: 'UPDATE_SHORTCUTS',
+          shortcuts: shortcuts
+        });
+      }
+    });
+  });
+}
+
 chrome.runtime.onMessage.addListener((request, _, sendResponse) => {
   const messageType = request.type
   if (messageType === 'EXECUTE_PLUGIN') {

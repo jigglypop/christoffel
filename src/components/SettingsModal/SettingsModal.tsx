@@ -3,6 +3,7 @@ import styles from './SettingsModal.module.css';
 import { useAtom } from 'jotai';
 import { userProfileAtom } from '../../atoms/chatAtoms';
 import type { SettingsModalProps } from './types';
+import type { FeaturePlugin } from '../../types/features';
 
 export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose }) => {
   const [modelType, setModelType] = useState<'openai' | 'claude' | 'custom'>('openai');
@@ -10,17 +11,64 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
   const [apiKey, setApiKey] = useState('');
   const [userProfile, setUserProfile] = useAtom(userProfileAtom);
   const [profilePreview, setProfilePreview] = useState<string | null>(null);
+  const [plugins, setPlugins] = useState<FeaturePlugin[]>([]);
+  const [shortcuts, setShortcuts] = useState<Record<string, string>>({});
+  const [recordingKey, setRecordingKey] = useState<string | null>(null);
 
   useEffect(() => {
-    // 저장된 설정 불러오기
-    chrome.storage.sync.get(['apiSettings'], (result) => {
-      if (result.apiSettings) {
-        setModelType(result.apiSettings.modelType || 'openai');
-        setEndpoint(result.apiSettings.endpoint || '');
-        setApiKey(result.apiSettings.apiKey || '');
+    if (isOpen) {
+      chrome.storage.sync.get(['apiSettings', 'plugin_shortcuts'], (result) => {
+        if (result.apiSettings) {
+          setModelType(result.apiSettings.modelType || 'openai');
+          setEndpoint(result.apiSettings.endpoint || '');
+          setApiKey(result.apiSettings.apiKey || '');
+        }
+        if (result.plugin_shortcuts) {
+          setShortcuts(result.plugin_shortcuts);
+        }
+      });
+
+      if (chrome.runtime?.sendMessage) {
+        chrome.runtime.sendMessage({ type: 'GET_ALL_PLUGINS' }, (response) => {
+          if (!chrome.runtime.lastError && response) {
+            setPlugins(response);
+          }
+        });
       }
-    });
+    }
   }, [isOpen]);
+
+  const handleShortcutKeyDown = (e: React.KeyboardEvent, pluginId: string) => {
+    if (recordingKey !== pluginId) return;
+    
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const keys: string[] = [];
+    if (e.ctrlKey) keys.push('Ctrl');
+    if (e.altKey) keys.push('Alt');
+    if (e.shiftKey) keys.push('Shift');
+    if (e.metaKey) keys.push('Meta');
+    
+    // 특수키가 아닌 일반 키
+    if (e.key && !['Control', 'Alt', 'Shift', 'Meta'].includes(e.key)) {
+      keys.push(e.key.toUpperCase());
+    }
+    
+    if (keys.length > 1) { // 최소한 수정키 + 일반키 조합
+      const shortcut = keys.join('+');
+      setShortcuts(prev => ({ ...prev, [pluginId]: shortcut }));
+      setRecordingKey(null);
+    }
+  };
+
+  const handleShortcutClick = (pluginId: string) => {
+    setRecordingKey(recordingKey === pluginId ? null : pluginId);
+  };
+
+  const handleShortcutChange = (pluginId: string, value: string) => {
+    setShortcuts(prev => ({ ...prev, [pluginId]: value }));
+  };
 
   const handleSave = () => {
     const settings = {
@@ -31,7 +79,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
       apiKey
     };
 
-    chrome.storage.sync.set({ apiSettings: settings }, () => {
+    chrome.storage.sync.set({ apiSettings: settings, plugin_shortcuts: shortcuts }, () => {
       onClose();
     });
   };
@@ -103,6 +151,36 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose })
                 )}
               </div>
             </div>
+          </div>
+
+          <div className={styles.section}>
+            <h3>플러그인 단축키 설정</h3>
+            {plugins.map(plugin => (
+              <div key={plugin.id} className={styles.shortcutRow}>
+                <span className={styles.pluginName}>{plugin.name}</span>
+                <div className={styles.shortcutInputWrapper}>
+                  <input
+                    type="text"
+                    value={recordingKey === plugin.id ? '키를 입력하세요...' : (shortcuts[plugin.id] || '')}
+                    onChange={(e) => handleShortcutChange(plugin.id, e.target.value)}
+                    onKeyDown={(e) => handleShortcutKeyDown(e, plugin.id)}
+                    onClick={() => handleShortcutClick(plugin.id)}
+                    placeholder="클릭 후 단축키 입력"
+                    className={`${styles.input} ${recordingKey === plugin.id ? styles.recording : ''}`}
+                    readOnly={recordingKey === plugin.id}
+                  />
+                  {shortcuts[plugin.id] && (
+                    <button
+                      className={styles.clearButton}
+                      onClick={() => setShortcuts(prev => ({ ...prev, [plugin.id]: '' }))}
+                      title="단축키 삭제"
+                    >
+                      ×
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
 
           <div className={styles.section}>

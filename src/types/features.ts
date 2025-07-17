@@ -1,4 +1,4 @@
-export type FeatureCategory = 'text' | 'email' | 'code' | 'document'
+export type FeatureCategory = 'text' | 'nh' | 'experimental';
 
 export interface FeaturePlugin {
     id: string
@@ -9,6 +9,7 @@ export interface FeaturePlugin {
     defaultPrompt?: string
     enabled: boolean
     customPrompt?: string; // 사용자가 설정한 커스텀 프롬프트
+    shortcut?: string; // 사용자가 설정한 단축키
     execute: (text: string) => Promise<FeatureResult>;
 }
 

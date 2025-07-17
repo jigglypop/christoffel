@@ -14,9 +14,10 @@ interface FloatingUIProps {
   onClose: () => void;
   onExecutePlugin: (pluginId: string, text: string) => Promise<void>;
   activeElement?: HTMLInputElement | HTMLTextAreaElement | null;
+  selectionWidth?: number;
 }
 
-const FloatingUI: React.FC<FloatingUIProps> = ({ selectedText, onClose, onExecutePlugin, activeElement }) => {
+const FloatingUI: React.FC<FloatingUIProps> = ({ selectedText, onClose, onExecutePlugin, activeElement, selectionWidth }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isExecuting, setIsExecuting] = useState(false);
   const [result, setResult] = useState<string>('');
@@ -25,6 +26,7 @@ const FloatingUI: React.FC<FloatingUIProps> = ({ selectedText, onClose, onExecut
   const [plugins, setPlugins] = useState<FeaturePlugin[]>([]);
   const [position] = useAtom(floatingPositionAtom);
   const [background, setBackground] = useAtom(floatingBackgroundAtom);
+  const [showBgSelector, setShowBgSelector] = useState(true);
   
   const containerRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
@@ -32,10 +34,29 @@ const FloatingUI: React.FC<FloatingUIProps> = ({ selectedText, onClose, onExecut
   // 드래그 기능을 위한 useResize 훅 사용
   const { handleMouseDown } = useResize(true);
 
-  const truncatedText = selectedText.length > 100 ? `${selectedText.substring(0, 100)}...` : selectedText;
-
   const currentBg = backgrounds.find(bg => bg.id === background) || backgrounds[0];
   const isDarkTheme = ['gradient6'].includes(background); // 검정색만 다크 테마로 처리
+
+  // 컨테이너 너비 모니터링
+  useEffect(() => {
+    const checkWidth = () => {
+      if (containerRef.current) {
+        const actualWidth = containerRef.current.offsetWidth;
+        // 180px 미만이면 배경 선택기 숨김 (최소 너비와 동일)
+        setShowBgSelector(actualWidth >= 180);
+      }
+    };
+
+    checkWidth();
+    const resizeObserver = new ResizeObserver(checkWidth);
+    if (containerRef.current) {
+      resizeObserver.observe(containerRef.current);
+    }
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, []);
 
   useEffect(() => {
     const loadPlugins = () => {
@@ -194,20 +215,45 @@ const FloatingUI: React.FC<FloatingUIProps> = ({ selectedText, onClose, onExecut
         position: 'fixed',
         left: `${position.x}px`,
         top: `${position.y}px`,
+        width: selectionWidth ? `${selectionWidth}px` : 'auto',
       } as React.CSSProperties}
       data-theme={isDarkTheme ? 'dark' : 'light'}
     >
+      {/* 한 줄 푸터: 좌측 플러그인, 우측 테마/닫기 */}
       <div 
-        ref={headerRef}
-        className={styles.floatingHeader}
-        onMouseDown={(e) => handleMouseDown(e, containerRef.current!)}
+        className={styles.floatingFooter}
+        onMouseDown={(e) => {
+          // 버튼 클릭 시에는 드래그하지 않음
+          const target = e.target as HTMLElement;
+          if (target.closest('button') || target.closest(`.${styles.bgSelectorWrapper}`)) {
+            return;
+          }
+          handleMouseDown(e, containerRef.current!);
+        }}
         style={{ cursor: 'move' }}
-        data-draggable="true"
       >
-        <div className={styles.headerActions}>
-          <div className={styles.bgSelectorWrapper}>
-            <BackgroundSelector background={background} setBackground={setBackground} />
-          </div>
+        <div className={styles.footerLeft}>
+          {plugins.map((plugin) => (
+            <button 
+              key={plugin.id}
+              className={`${styles.floatingBtn} ${activePlugin === plugin.id ? styles.active : ''}`}
+              onClick={() => handlePluginClick(plugin.id)} 
+              disabled={isExecuting}
+              title={plugin.name}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                {getPluginIcon(plugin.id)}
+              </svg>
+            </button>
+          ))}
+        </div>
+        
+        <div className={styles.footerRight}>
+          {showBgSelector && (
+            <div className={styles.bgSelectorWrapper}>
+              <BackgroundSelector background={background} setBackground={setBackground} />
+            </div>
+          )}
           <button className={styles.closeBtn} onClick={onClose} title="닫기">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
               <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
@@ -215,33 +261,14 @@ const FloatingUI: React.FC<FloatingUIProps> = ({ selectedText, onClose, onExecut
           </button>
         </div>
       </div>
-
-      <div className={styles.selectedTextContainer}>
-        <p className={styles.selectedText}>{truncatedText}</p>
-      </div>
       
-      <div className={styles.floatingActions}>
-        {plugins.map((plugin) => (
-          <button 
-            key={plugin.id}
-            className={`${styles.floatingBtn} ${activePlugin === plugin.id ? styles.active : ''}`}
-            onClick={() => handlePluginClick(plugin.id)} 
-            disabled={isExecuting}
-            title={plugin.name}
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-              {getPluginIcon(plugin.id)}
-            </svg>
-          </button>
-        ))}
-      </div>
-      
+      {/* 결과 영역 */}
       {(result || error || isExecuting) && (
-        <div className={styles.floatingResult}>
+        <div className={styles.resultArea}>
           {isExecuting && <div className={styles.loading}>처리 중...</div>}
           {error && <div className={styles.error}>{error}</div>}
           {result && !isExecuting && (
-            <>
+            <div className={styles.resultContent}>
               <div className={styles.resultText}>{result}</div>
               <div className={styles.resultActions}>
                 <button className={styles.actionBtn} onClick={handleCopyResult} title="복사">
@@ -257,7 +284,7 @@ const FloatingUI: React.FC<FloatingUIProps> = ({ selectedText, onClose, onExecut
                   </button>
                 )}
               </div>
-            </>
+            </div>
           )}
         </div>
       )}

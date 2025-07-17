@@ -10,4 +10,5 @@ export interface Message {
 export interface SelectionInfo {
   text: string
   position: { x: number; y: number }
+  size?: { width: number; height: number }
 } 
