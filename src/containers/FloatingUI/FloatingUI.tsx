@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useAtom } from 'jotai';
 import styles from './FloatingUI.module.css';
 import { getOpenAICompletion } from '../../services/openai';
-import type { FeaturePlugin } from '../../types/features';
+import type { FeaturePlugin, FeatureResult } from '../../types/features';
 import { BackgroundSelector } from '../../components/BGSelector';
 import { backgrounds } from '../../components/BGSelector/constants';
 import { floatingPositionAtom, floatingBackgroundAtom } from '../../atoms/chatAtoms';
@@ -12,7 +12,7 @@ import type { Message } from './types';
 interface FloatingUIProps {
   selectedText: string;
   onClose: () => void;
-  onExecutePlugin: (pluginId: string, text: string) => Promise<void>;
+  onExecutePlugin: (pluginId: string, text: string) => Promise<FeatureResult>;
   activeElement?: HTMLInputElement | HTMLTextAreaElement | null;
   selectionWidth?: number;
 }
@@ -111,17 +111,12 @@ const FloatingUI: React.FC<FloatingUIProps> = ({ selectedText, onClose, onExecut
     setActivePlugin(pluginId);
     
     try {
-      const plugin = plugins.find(p => p.id === pluginId);
-      if (!plugin) {
-        throw new Error('플러그인을 찾을 수 없습니다.');
+      const result = await onExecutePlugin(pluginId, selectedText);
+      if (result.success) {
+        setResult(result.data || '작업을 완료했습니다.');
+      } else {
+        throw new Error(result.error || '알 수 없는 오류가 발생했습니다.');
       }
-
-      const prompt = getPromptForPlugin(plugin, selectedText);
-      const messages: Message[] = [
-        { id: '1', role: 'user', content: prompt, timestamp: new Date() }
-      ];
-      const response = await getOpenAICompletion(messages);
-      setResult(response || '응답을 받지 못했습니다.');
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : '오류가 발생했습니다.';
       setError(errorMessage);

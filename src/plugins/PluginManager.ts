@@ -107,4 +107,16 @@ class PluginManager {
 }
 
 export const pluginManagerPromise = PluginManager.create();
-export const getPluginManager = () => pluginManagerPromise; 
+export const getPluginManager = () => pluginManagerPromise;
+
+export const handlePluginExecution = async (pluginId: string, text: string) => {
+  const pluginManager = await getPluginManager();
+  const result = await pluginManager.executePlugin(pluginId, text);
+
+  if (result.success) {
+    console.log(`Plugin ${pluginId} executed successfully with result: `, result.data);
+  } else {
+    console.error(`Plugin ${pluginId} execution failed: `, result.error);
+  }
+  return result;
+}; 
