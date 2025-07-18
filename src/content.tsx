@@ -85,44 +85,6 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-function createChristoffelButton() {
-  if (christoffelButtonContainer) return
-  christoffelButtonContainer = document.createElement('div')
-  christoffelButtonContainer.id = 'christoffel-button'
-  // 인라인 스타일로 position fixed 보장
-  christoffelButtonContainer.style.position = 'fixed'
-  christoffelButtonContainer.style.bottom = '30px'
-  christoffelButtonContainer.style.right = '30px'
-  christoffelButtonContainer.style.zIndex = '2147483640'
-  const button = document.createElement('button')
-  button.className = styles.christoffelButton
-  const overlay = document.createElement('span')
-  overlay.className = styles.christoffelButtonOverlay
-  // 아이콘 이미지
-  const christoffelIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-  christoffelIcon.setAttribute('viewBox','0 0 24 24')
-  christoffelIcon.setAttribute('width','24')
-  christoffelIcon.setAttribute('height','24')
-  christoffelIcon.setAttribute('class', `${styles.christoffelButtonImage} ${styles.christoffelIcon} christoffel-icon`)
-  christoffelIcon.innerHTML = '<path d="M4 4h16v10H5.17L4 15.17V4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>'
-  // 버튼 색상을 흰색으로
-  christoffelIcon.style.color = '#ffffff'
-  // 닫기 아이콘 (SVG 유지)
-  const closeIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-  closeIcon.setAttribute('class', `${styles.closeIcon} close-icon`)
-  closeIcon.setAttribute('width', '24')
-  closeIcon.setAttribute('height', '24')
-  closeIcon.setAttribute('viewBox', '0 0 24 24')
-  closeIcon.innerHTML = '<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>'
-  
-  button.appendChild(overlay)
-  button.appendChild(christoffelIcon)
-  button.appendChild(closeIcon)
-  christoffelButtonContainer.appendChild(button)
-  document.body.appendChild(christoffelButtonContainer)
-  button.addEventListener('click', toggleChristoffel)
-}
-
 function toggleChristoffel() {
   if (store.get(christoffelOpenAtom)) {
     removeFloatingUI();
@@ -286,7 +248,6 @@ function handleTextSelection() {
       rect = range.getBoundingClientRect();
     }
   }
-  
   if (selectedText && rect) {
     const selectionInfo: SelectionInfo = {
       text: selectedText,
@@ -348,7 +309,6 @@ document.addEventListener('mouseup', (e) => {
 
 function resizeChristoffelWindow(direction: 'larger' | 'smaller') {
   if (!store.get(christoffelOpenAtom) || !floatingUIRoot) return
-
   window.postMessage({
     type: 'RESIZE_CHRISTOFFEL',
     direction: direction,
@@ -373,11 +333,6 @@ if (chrome.runtime && chrome.runtime.onMessage) {
   });
 }
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', createChristoffelButton)
-} else {
-  createChristoffelButton()
-}
 
 const handlePluginExecution = (pluginId: string, text: string): Promise<void> => {
   return new Promise((resolve, reject) => {
