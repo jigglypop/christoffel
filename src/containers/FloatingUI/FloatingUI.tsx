@@ -247,7 +247,6 @@ const FloatingUI: React.FC<FloatingUIProps> = ({ selectedText, onClose, onExecut
             </button>
           ))}
         </div>
-        
         <div className={styles.footerRight}>
           {showBgSelector && (
             <div className={styles.bgSelectorWrapper}>
