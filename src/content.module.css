@@ -242,8 +242,8 @@ body {
   background: rgba(18, 194, 233, 0.3);
   color: inherit;
 }
-/* Extension Popup */
-.extensionPopup {
+/* Extension Settings */
+.extensionSettings {
   position: absolute;
   top: 60px;
   right: 20px;
@@ -254,20 +254,20 @@ body {
   z-index: 1000;
   animation: slideIn 0.2s ease;
 }
-.popupHeader {
+.settingsHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 16px;
   border-bottom: 1px solid #eee;
 }
-.popupHeader h3 {
+.settingsHeader h3 {
   margin: 0;
   font-size: 16px;
   font-weight: 600;
   color: #333;
 }
-.popupHeader button {
+.settingsHeader button {
   background: none;
   border: none;
   font-size: 24px;
@@ -280,22 +280,22 @@ body {
   align-items: center;
   justify-content: center;
 }
-.popupHeader button:hover {
+.settingsHeader button:hover {
   color: #333;
 }
-.popupContent {
+.settingsContent {
   padding: 16px;
 }
-.popupContent p {
+.settingsContent p {
   margin: 0 0 16px 0;
   color: #666;
   font-size: 14px;
 }
-.popupActions {
+.settingsActions {
   display: flex;
   gap: 8px;
 }
-.popupActions button {
+.settingsActions button {
   flex: 1;
   padding: 8px 16px;
   border: 1px solid #ddd;
@@ -306,16 +306,16 @@ body {
   cursor: pointer;
   transition: all 0.2s;
 }
-.popupActions button:hover {
+.settingsActions button:hover {
   background: #f5f5f5;
   border-color: #ccc;
 }
-.popupActions button:first-child {
+.settingsActions button:first-child {
   background: linear-gradient(to right, #12c2e9, #c471ed, #f64f59);
   color: white;
   border: none;
 }
-.popupActions button:first-child:hover {
+.settingsActions button:first-child:hover {
   opacity: 0.9;
 } 
 

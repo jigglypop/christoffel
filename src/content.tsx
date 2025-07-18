@@ -11,13 +11,10 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 let floatingUIRoot: ReactDOM.Root | null = null
 let floatingUIContainer: HTMLElement | null = null
 let selectionHighlight: HTMLElement | null = null
-let christoffelButtonContainer: HTMLElement | null = null
 // 상태는 jotai store atom으로 관리
 let currentActiveElement: HTMLInputElement | HTMLTextAreaElement | null = null;
 const queryClient = new QueryClient()
-
 let pluginShortcuts: Record<string, string> = {};
-
 // 페이지 로드 시 저장된 단축키 불러오기
 if (chrome.storage?.sync) {
   chrome.storage.sync.get(['plugin_shortcuts'], (result) => {
@@ -48,25 +45,20 @@ document.addEventListener('keydown', (e) => {
   }
   
   const shortcut = keys.join('+');
-  
   // 해당 단축키에 매핑된 플러그인 찾기
   const pluginId = Object.entries(pluginShortcuts).find(([_, s]) => s === shortcut)?.[0];
-  
   if (pluginId) {
     e.preventDefault();
     e.stopPropagation();
-    
     // 현재 선택된 텍스트 가져오기
     const selection = window.getSelection();
     const selectedText = selection?.toString().trim();
-    
     if (selectedText) {
       // 플러그인 실행
       handlePluginExecution(pluginId, selectedText).then(() => {
         // 플로팅 UI 표시
         const range = selection!.getRangeAt(0);
         const rect = range.getBoundingClientRect();
-        
         const selectionInfo: SelectionInfo = {
           text: selectedText,
           position: {
@@ -85,21 +77,9 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-function toggleChristoffel() {
-  if (store.get(christoffelOpenAtom)) {
-    removeFloatingUI();
-  } else {
-    // This logic is flawed because it requires a selection.
-    // For now, the button only closes the UI.
-    // A better implementation would be to open a default chat window.
-  }
-}
-
 function createFloatingUI(selection: SelectionInfo) {
   if (store.get(christoffelOpenAtom)) return;
   removeFloatingUI();
-  
-  // 선택 영역 하이라이트 생성
   selectionHighlight = document.createElement('div');
   selectionHighlight.style.position = 'fixed';
   selectionHighlight.style.left = `${selection.position.x}px`;
@@ -283,17 +263,14 @@ document.addEventListener('mouseup', (e) => {
 
 // input/textarea 내부 텍스트 선택
 let selectionTimeout: NodeJS.Timeout | null = null;
-
 document.addEventListener('selectionchange', () => {
   const activeElement = document.activeElement;
-  
   // input 또는 textarea에서만 처리
   if (activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA')) {
     // 이전 타임아웃 취소
     if (selectionTimeout) {
       clearTimeout(selectionTimeout);
     }
-    
     // 짧은 지연 후 처리 (선택이 완료되도록)
     selectionTimeout = setTimeout(handleTextSelection, 100);
   }
@@ -319,9 +296,6 @@ if (chrome.runtime && chrome.runtime.onMessage) {
     if (message.type === 'COMMAND' && message.payload?.command) {
       const command = message.payload.command;
       switch (command) {
-        case 'toggle-christoffel':
-          toggleChristoffel();
-          break;
         case 'resize-larger':
           resizeChristoffelWindow('larger');
           break;

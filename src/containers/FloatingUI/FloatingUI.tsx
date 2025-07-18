@@ -27,10 +27,7 @@ const FloatingUI: React.FC<FloatingUIProps> = ({ selectedText, onClose, onExecut
   const [position] = useAtom(floatingPositionAtom);
   const [background, setBackground] = useAtom(floatingBackgroundAtom);
   const [showBgSelector, setShowBgSelector] = useState(true);
-  
   const containerRef = useRef<HTMLDivElement>(null);
-  const headerRef = useRef<HTMLDivElement>(null);
-  
   // 드래그 기능을 위한 useResize 훅 사용
   const { handleMouseDown } = useResize(true);
 

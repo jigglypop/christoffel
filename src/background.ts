@@ -3,19 +3,17 @@ import { getPluginManager } from './plugins/PluginManager'
 import { sseClient } from './utils/sse'
 
 chrome.runtime.onInstalled.addListener(() => {
-  console.log('Lovebug extension installed or updated.')
+  console.log('christoffel extension installed or updated.')
   getPluginManager().then(manager => {
     manager.saveState()
   })
 })
-
 // 단축키 이벤트 리스너 등록
 chrome.storage.sync.get(['plugin_shortcuts'], (result) => {
   if (result.plugin_shortcuts) {
     registerShortcuts(result.plugin_shortcuts);
   }
 });
-
 // storage 변경 감지하여 단축키 재등록
 chrome.storage.onChanged.addListener((changes, areaName) => {
   if (areaName === 'sync' && changes.plugin_shortcuts) {
@@ -86,7 +84,6 @@ chrome.runtime.onMessage.addListener((request, _, sendResponse) => {
     })()
     return true
   }
-  
   if (messageType === 'SSE_START') {
     return true;
   }
@@ -96,8 +93,8 @@ chrome.runtime.onMessage.addListener((request, _, sendResponse) => {
 // Context menu setup
 chrome.contextMenus.removeAll(() => {
   chrome.contextMenus.create({
-    id: 'lovebug-ai',
-    title: 'Lovebug AI Assistant',
+    id: 'Christoffel-ai',
+    title: 'Christoffel AI Assistant',
     contexts: ['selection'],
   });
 });

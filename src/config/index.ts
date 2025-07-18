@@ -84,30 +84,6 @@ export const NH_CONFIG = {
       }
     }
   },
-
-  // 부서별 설정
-  departments: {
-    '여신기획부': {
-      defaultFeatures: ['loan', 'digital'],
-      apiLimit: 1000
-    },
-    '수신기획부': {
-      defaultFeatures: ['deposit', 'digital'],
-      apiLimit: 1000
-    },
-    '외환업무부': {
-      defaultFeatures: ['forex'],
-      apiLimit: 500
-    },
-    '디지털혁신부': {
-      defaultFeatures: ['digital', 'loan', 'deposit'],
-      apiLimit: 2000
-    },
-    '농업금융부': {
-      defaultFeatures: ['agriculture', 'loan'],
-      apiLimit: 800
-    }
-  },
   // 로깅 설정
   logging: {
     level: 'INFO',

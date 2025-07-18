@@ -14,7 +14,7 @@
     "<all_urls>"
   ],
   "action": {
-    "default_popup": "popup.html",
+    "default_settings": "settings.html",
     "default_icon": {
       "19": "icons/icon19.png",
       "48": "icons/icon48.png"

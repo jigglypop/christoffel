@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import type { FeaturePlugin } from '../types/features';
-import styles from './Popup.module.css';
+import { useState, useEffect } from 'react';
+import type { FeaturePlugin } from '../../types/features';
+import styles from './Settings.module.css';
 
-function Popup() {
+export default function Settings() {
   const [plugins, setPlugins] = useState<FeaturePlugin[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -25,18 +25,15 @@ function Popup() {
     });
   }, []);
 
-  const handleToggle = (pluginId: string) => {
-    const updatePluginState = (enabled: boolean) => 
-      setPlugins(prevPlugins =>
-        prevPlugins.map(p => p.id === pluginId ? { ...p, enabled } : p)
-      );
-    
-    updatePluginState(!plugins.find(p => p.id === pluginId)?.enabled);
-    
+  const updatePluginState = (enabled: boolean, pluginId:string) =>
+    setPlugins(prevPlugins => prevPlugins.map(p => (p.id === pluginId ? { ...p, enabled } : p)))
+  
+  const onToggle = (pluginId: string) => {
+    updatePluginState(!plugins.find(p => p.id === pluginId)?.enabled, pluginId)
     chrome.runtime.sendMessage({ type: 'TOGGLE_PLUGIN', pluginId: pluginId }, (response) => {
       if (chrome.runtime.lastError || !response?.success) {
         setError(`플러그인 상태 변경에 실패했습니다.`);
-        updatePluginState(plugins.find(p => p.id === pluginId)?.enabled || false);
+        updatePluginState(plugins.find(p => p.id === pluginId)?.enabled || false, pluginId);
         setTimeout(() => setError(null), 3000);
       }
     });
@@ -94,8 +91,8 @@ function Popup() {
   };
 
   return (
-    <div className={styles.popupContainer}>
-      <header className={styles.popupHeader}>
+    <div className={styles.settingsContainer}>
+      <header className={styles.settingsHeader}>
         <div className={styles.headerContent}>
           <div className={styles.logoSection}>
             <div className={styles.logo}>
@@ -123,7 +120,7 @@ function Popup() {
         <p className={styles.sectionDescription}>사용할 AI 기능을 선택하세요</p>
       </section>
 
-      <main className={styles.popupMain}>
+      <main className={styles.settingsMain}>
         {error && (
           <div className={styles.errorBanner}>
             <span>{error}</span>
@@ -160,7 +157,7 @@ function Popup() {
                     <input 
                       type="checkbox" 
                       checked={plugin.enabled}
-                      onChange={() => handleToggle(plugin.id)} 
+                      onChange={() => onToggle(plugin.id)} 
                     />
                     <span className={`${styles.slider} ${styles.round}`}></span>
                   </label>
@@ -202,13 +199,9 @@ function Popup() {
         )}
       </main>
 
-      <footer className={styles.popupFooter}>
-        <a href="#" className={styles.footerLink}>도움말</a>
-        <span className={styles.separator}>•</span>
-        <a href="https://github.com/your-repo/christoffel" target="_blank" rel="noopener noreferrer" className={styles.footerLink}>GitHub</a>
+      <footer className={styles.settingsFooter}>
+        <span className={styles.separator}>문의</span>
       </footer>
     </div>
   );
 }
-
-export default Popup; 

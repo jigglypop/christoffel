@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import './App.css';
+import './font.module.css'
 
 function App() {
   useEffect(() => {
