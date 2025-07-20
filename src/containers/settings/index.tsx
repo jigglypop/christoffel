@@ -1,14 +1,19 @@
+import React, { useState } from 'react';
 import styles from './Settings.module.css';
 import { useSettingsState } from '../../hooks/useSettingsState';
 import { usePluginSettings } from '../../hooks/usePluginSettings';
 import { useGeneralSettings } from '../../hooks/useGeneralSettings';
 import { SettingsHeader } from '../../components/SettingsHeader';
-import { PluginList } from '../../components/PluginList';
+import { TabNavigation, type TabType } from '../../components/TabNavigation';
+import { PluginListSimple } from '../../components/PluginListSimple';
+import { ShortcutSettings } from '../../components/ShortcutSettings';
 import { LoadingSpinner } from '../../components/LoadingSpinner';
 import { ErrorBanner } from '../../components/ErrorBanner';
 import { GeneralSettings } from '../../components/GeneralSettings';
 
 export default function Settings() {
+  const [activeTab, setActiveTab] = useState<TabType>('general');
+  
   const {
     error,
     setError,
@@ -54,52 +59,81 @@ export default function Settings() {
     }
   };
 
+  const renderTabContent = () => {
+    if (error && activeTab !== 'general') {
+      return <ErrorBanner message={error} />;
+    }
+
+    switch (activeTab) {
+      case 'general':
+        return (
+          <>
+            {error && <ErrorBanner message={error} />}
+            {generalLoading ? (
+              <LoadingSpinner text="설정을 불러오는 중" />
+            ) : (
+              <GeneralSettings
+                isActive={isActive}
+                activationMode={activationMode}
+                onActiveChange={updateActiveState}
+                onModeChange={updateActivationMode}
+              />
+            )}
+          </>
+        );
+      
+      case 'plugins':
+        return (
+          <>
+            {loading ? (
+              <LoadingSpinner text="플러그인을 불러오는 중" />
+            ) : (
+              <PluginListSimple
+                plugins={plugins}
+                expandedPlugin={expandedPlugin}
+                promptChanges={promptChanges}
+                onToggle={onToggle}
+                onExpand={toggleExpanded}
+                onPromptChange={handlePromptChange}
+                onSavePrompt={savePrompt}
+                onResetPrompt={resetPrompt}
+                getPluginIcon={getPluginIcon}
+              />
+            )}
+          </>
+        );
+      
+      case 'shortcuts':
+        return (
+          <>
+            {loading ? (
+              <LoadingSpinner text="플러그인을 불러오는 중" />
+            ) : (
+              <ShortcutSettings
+                plugins={plugins}
+                shortcuts={shortcuts}
+                settingShortcutFor={settingShortcutFor}
+                onSetShortcut={handleSetShortcut}
+                onShortcutChange={handleShortcutChange}
+                onClearShortcut={handleClearShortcut}
+                onStopSettingShortcut={handleStopSettingShortcut}
+                getPluginIcon={getPluginIcon}
+              />
+            )}
+          </>
+        );
+      
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className={styles.settingsContainer}>
       <SettingsHeader />
-      
-      <section className={styles.settingsSection}>
-        <h2>일반 설정</h2>
-      </section>
+      <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />
       <main className={styles.settingsMain}>
-        {error && <ErrorBanner message={error} />}
-        {generalLoading ? (
-          <LoadingSpinner text="설정을 불러오는 중" />
-        ) : (
-          <GeneralSettings
-            isActive={isActive}
-            activationMode={activationMode}
-            onActiveChange={updateActiveState}
-            onModeChange={updateActivationMode}
-          />
-        )}
-      </main>
-
-      <section className={styles.settingsSection}>
-        <h2>플러그인 설정</h2>
-      </section>
-      <main className={styles.settingsMain}>
-        {loading ? (
-          <LoadingSpinner text="플러그인을 불러오는 중" />
-        ) : (
-          <PluginList
-            plugins={plugins}
-            expandedPlugin={expandedPlugin}
-            promptChanges={promptChanges}
-            onToggle={onToggle}
-            onExpand={toggleExpanded}
-            onPromptChange={handlePromptChange}
-            onSavePrompt={savePrompt}
-            onResetPrompt={resetPrompt}
-            getPluginIcon={getPluginIcon}
-            shortcuts={shortcuts}
-            settingShortcutFor={settingShortcutFor}
-            onSetShortcut={handleSetShortcut}
-            onShortcutChange={handleShortcutChange}
-            onClearShortcut={handleClearShortcut}
-            onStopSettingShortcut={handleStopSettingShortcut}
-          />
-        )}
+        {renderTabContent()}
       </main>
     </div>
   );

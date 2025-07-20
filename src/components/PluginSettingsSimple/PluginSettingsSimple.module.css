@@ -1,0 +1,77 @@
+.pluginSettings {
+  background-color: #f8f9fa;
+  padding: 16px;
+  border-top: 1px solid #e9ecef;
+}
+
+.promptSection {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.promptLabel {
+  font-weight: 600;
+  font-size: 14px;
+  color: #495057;
+}
+
+.promptHelp {
+  font-size: 12px;
+  color: #868e96;
+  margin: 0;
+}
+
+.promptInput {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: 1px solid #ced4da;
+  background-color: #fff;
+  font-size: 14px;
+  font-family: inherit;
+  resize: vertical;
+  box-sizing: border-box;
+}
+
+.promptInput:focus {
+  outline: none;
+  border-color: #5A67D8;
+  box-shadow: 0 0 0 2px rgba(90, 103, 216, 0.2);
+}
+
+.promptActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.btn {
+  padding: 6px 12px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btnSecondary {
+  background-color: #e9ecef;
+  color: #495057;
+  border-color: #ced4da;
+}
+
+.btnSecondary:hover {
+  background-color: #dee2e6;
+}
+
+.btnPrimary {
+  background-color: #5A67D8;
+  color: white;
+}
+
+.btnPrimary:hover {
+  background-color: #4c57b0;
+} 

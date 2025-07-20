@@ -61,12 +61,22 @@ document.addEventListener('mousedown', (e) => {
 function createStatusIndicator() {
   if (statusIndicatorRoot) return;
 
-  const statusContainer = document.createElement('div');
-  statusContainer.id = 'christoffel-status-indicator';
-  document.body.appendChild(statusContainer);
-  
-  statusIndicatorRoot = ReactDOM.createRoot(statusContainer);
-  renderStatusIndicator();
+  try {
+    const statusContainer = document.createElement('div');
+    statusContainer.id = 'christoffel-status-indicator';
+    
+    // 기존 상태 표시기가 있다면 제거
+    const existing = document.getElementById('christoffel-status-indicator');
+    if (existing) {
+      existing.remove();
+    }
+    
+    document.body.appendChild(statusContainer);
+    statusIndicatorRoot = ReactDOM.createRoot(statusContainer);
+    renderStatusIndicator();
+  } catch (error) {
+    console.warn('Christoffel: 상태 표시기 생성 실패:', error);
+  }
 }
 
 function renderStatusIndicator() {
@@ -117,10 +127,20 @@ if (chrome.storage?.sync) {
     if (result.ai_assistant_active !== undefined) {
       isAIAssistantActive = result.ai_assistant_active;
     }
-    createStatusIndicator();
+    // DOM이 로드된 후 상태 표시기 생성
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', createStatusIndicator);
+    } else {
+      createStatusIndicator();
+    }
   });
 } else {
-  createStatusIndicator();
+  // DOM이 로드된 후 상태 표시기 생성
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', createStatusIndicator);
+  } else {
+    createStatusIndicator();
+  }
 }
 
 document.addEventListener('keydown', (e) => {

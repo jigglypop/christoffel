@@ -1,0 +1,196 @@
+.shortcutSettings {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.header {
+  margin-bottom: 24px;
+}
+
+.header h3 {
+  margin: 0 0 8px 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #343a40;
+}
+
+.description {
+  margin: 0;
+  font-size: 14px;
+  color: #6c757d;
+  line-height: 1.5;
+}
+
+.shortcutList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.shortcutItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  background-color: white;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.shortcutItem:hover {
+  border-color: #ced4da;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.pluginInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.pluginIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  color: #5A67D8;
+}
+
+.pluginDetails {
+  flex: 1;
+}
+
+.pluginName {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #343a40;
+}
+
+.pluginDescription {
+  margin: 0;
+  font-size: 13px;
+  color: #6c757d;
+  line-height: 1.4;
+}
+
+.shortcutControls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.shortcutDisplayWrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.shortcutDisplay {
+  min-width: 120px;
+  padding: 8px 12px;
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 4px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: center;
+  color: #495057;
+}
+
+.noShortcut {
+  color: #adb5bd;
+  font-style: italic;
+}
+
+.shortcutInputWrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.shortcutInput {
+  min-width: 120px;
+  padding: 8px 12px;
+  background-color: #fff3cd;
+  border: 2px solid #ffeaa7;
+  border-radius: 4px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 13px;
+  font-weight: 500;
+  text-align: center;
+  color: #856404;
+  outline: none;
+  cursor: pointer;
+}
+
+.shortcutInput:focus {
+  border-color: #ffc107;
+  box-shadow: 0 0 0 2px rgba(255, 193, 7, 0.2);
+}
+
+.shortcutActions {
+  display: flex;
+  gap: 6px;
+}
+
+.btn {
+  padding: 6px 12px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btnSecondary {
+  background-color: #e9ecef;
+  color: #495057;
+  border-color: #ced4da;
+}
+
+.btnSecondary:hover {
+  background-color: #dee2e6;
+}
+
+.btnPrimary {
+  background-color: #5A67D8;
+  color: white;
+}
+
+.btnPrimary:hover {
+  background-color: #4c57b0;
+}
+
+@media (max-width: 768px) {
+  .shortcutSettings {
+    padding: 0 12px;
+  }
+  
+  .shortcutItem {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+  
+  .pluginInfo {
+    justify-content: flex-start;
+  }
+  
+  .shortcutControls {
+    justify-content: center;
+  }
+  
+  .shortcutDisplayWrapper,
+  .shortcutInputWrapper {
+    justify-content: center;
+  }
+} 
