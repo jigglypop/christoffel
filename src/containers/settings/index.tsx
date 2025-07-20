@@ -1,79 +1,43 @@
-import { useState, useEffect } from 'react';
-import type { FeaturePlugin } from '../../types/features';
 import styles from './Settings.module.css';
+import { useSettingsState } from '../../hooks/useSettingsState';
+import { usePluginSettings } from '../../hooks/usePluginSettings';
+import { useGeneralSettings } from '../../hooks/useGeneralSettings';
+import { SettingsHeader } from '../../components/SettingsHeader';
+import { PluginList } from '../../components/PluginList';
+import { LoadingSpinner } from '../../components/LoadingSpinner';
+import { ErrorBanner } from '../../components/ErrorBanner';
+import { GeneralSettings } from '../../components/GeneralSettings';
 
 export default function Settings() {
-  const [plugins, setPlugins] = useState<FeaturePlugin[]>([]);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [expandedPlugin, setExpandedPlugin] = useState<string | null>(null);
-  const [promptChanges, setPromptChanges] = useState<Record<string, string>>({});
-
-  useEffect(() => {
-    chrome.runtime.sendMessage({ type: 'GET_ALL_PLUGINS' }, (response) => {
-      if (chrome.runtime.lastError) {
-        setError('플러그인 목록을 불러오는 데 실패했습니다.');
-      } else if (response) {
-        setPlugins(response);
-        const initialPrompts: Record<string, string> = {};
-        response.forEach((plugin: FeaturePlugin) => {
-          initialPrompts[plugin.id] = plugin.customPrompt || plugin.defaultPrompt || '';
-        });
-        setPromptChanges(initialPrompts);
-      }
-      setLoading(false);
-    });
-  }, []);
-
-  const updatePluginState = (enabled: boolean, pluginId:string) =>
-    setPlugins(prevPlugins => prevPlugins.map(p => (p.id === pluginId ? { ...p, enabled } : p)))
-  
-  const onToggle = (pluginId: string) => {
-    updatePluginState(!plugins.find(p => p.id === pluginId)?.enabled, pluginId)
-    chrome.runtime.sendMessage({ type: 'TOGGLE_PLUGIN', pluginId: pluginId }, (response) => {
-      if (chrome.runtime.lastError || !response?.success) {
-        setError(`플러그인 상태 변경에 실패했습니다.`);
-        updatePluginState(plugins.find(p => p.id === pluginId)?.enabled || false, pluginId);
-        setTimeout(() => setError(null), 3000);
-      }
-    });
-  };
-
-  const handlePromptChange = (pluginId: string, newPrompt: string) => {
-    setPromptChanges(prev => ({ ...prev, [pluginId]: newPrompt }));
-  };
-
-  const savePrompt = (pluginId: string) => {
-    const newPrompt = promptChanges[pluginId];
-    chrome.runtime.sendMessage({
-      type: 'UPDATE_PLUGIN_PROMPT',
-      pluginId: pluginId,
-      prompt: newPrompt
-    }, (response) => {
-      if (chrome.runtime.lastError || !response?.success) {
-        setError('프롬프트 저장에 실패했습니다.');
-        setTimeout(() => setError(null), 3000);
-      } else {
-        setPlugins(prevPlugins =>
-          prevPlugins.map(p =>
-            p.id === pluginId ? { ...p, customPrompt: newPrompt } : p
-          )
-        );
-        setExpandedPlugin(null);
-      }
-    });
-  };
-
-  const resetPrompt = (pluginId: string) => {
-    const plugin = plugins.find(p => p.id === pluginId);
-    if (plugin) {
-      setPromptChanges(prev => ({ ...prev, [pluginId]: plugin.defaultPrompt || '' }));
-    }
-  };
-
-  const toggleExpanded = (pluginId: string) => {
-    setExpandedPlugin(expandedPlugin === pluginId ? null : pluginId);
-  };
+  const {
+    error,
+    setError,
+    loading,
+    setLoading,
+    expandedPlugin,
+    toggleExpanded,
+    shortcuts,
+    settingShortcutFor,
+    handleSetShortcut,
+    handleShortcutChange,
+    handleClearShortcut,
+    handleStopSettingShortcut,
+  } = useSettingsState();
+  const {
+    plugins,
+    promptChanges,
+    onToggle,
+    handlePromptChange,
+    savePrompt,
+    resetPrompt,
+  } = usePluginSettings(setError, setLoading);
+  const {
+    isActive,
+    activationMode,
+    loading: generalLoading,
+    updateActiveState,
+    updateActivationMode,
+  } = useGeneralSettings();
 
   const getPluginIcon = (pluginId: string) => {
     switch (pluginId) {
@@ -92,116 +56,51 @@ export default function Settings() {
 
   return (
     <div className={styles.settingsContainer}>
-      <header className={styles.settingsHeader}>
-        <div className={styles.headerContent}>
-          <div className={styles.logoSection}>
-            <div className={styles.logo}>
-              <svg width="64" height="64" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect width="128" height="128" fill="url(#christoffel-gradient)" rx="24"/>
-                <path d="M42 90L64 48L86 90M64 48L86 6" stroke="white" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round"/>
-                <defs>
-                  <linearGradient id="christoffel-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#5A67D8"/>
-                    <stop offset="100%" stopColor="#886AEA"/>
-                  </linearGradient>
-                </defs>
-              </svg>
-            </div>
-            <div className={styles.titleSection}>
-              <h1>Christoffel</h1>
-              <span className={styles.version}>v{chrome.runtime.getManifest().version}</span>
-            </div>
-          </div>
-        </div>
-      </header>
+      <SettingsHeader />
       
       <section className={styles.settingsSection}>
-        <h2>플러그인 설정</h2>
-        <p className={styles.sectionDescription}>사용할 AI 기능을 선택하세요</p>
+        <h2>일반 설정</h2>
       </section>
-
       <main className={styles.settingsMain}>
-        {error && (
-          <div className={styles.errorBanner}>
-            <span>{error}</span>
-          </div>
-        )}
-        
-        {loading ? (
-          <div className={styles.loadingState}>
-            <div className={styles.spinner}></div>
-            <p>플러그인을 불러오는 중...</p>
-          </div>
+        {error && <ErrorBanner message={error} />}
+        {generalLoading ? (
+          <LoadingSpinner text="설정을 불러오는 중" />
         ) : (
-          <ul className={styles.pluginList}>
-            {plugins.map((plugin) => (
-              <li key={plugin.id} className={`${styles.pluginItem} ${expandedPlugin === plugin.id ? styles.expanded : ''}`}>
-                <div className={styles.pluginMain}>
-                  <div className={styles.pluginIcon}>
-                    {getPluginIcon(plugin.id)}
-                  </div>
-                  <div className={styles.pluginInfo}>
-                    <span className={styles.pluginName}>{plugin.name}</span>
-                    <p className={styles.pluginDescription}>{plugin.description}</p>
-                  </div>
-                  <button 
-                    className={styles.settingsBtn} 
-                    onClick={() => toggleExpanded(plugin.id)}
-                    title="프롬프트 설정"
-                  >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 15.516c1.922 0 3.516-1.594 3.516-3.516S13.922 8.484 12 8.484 8.484 10.078 8.484 12s1.594 3.516 3.516 3.516zm7.453-2.532l2.109 1.641c.188.141.234.422.094.656l-2.016 3.469c-.141.234-.375.281-.609.188l-2.484-1.031c-.516.375-1.078.703-1.688.891l-.375 2.672c-.047.234-.234.422-.469.422h-4.031c-.234 0-.422-.188-.469-.422l-.375-2.672c-.609-.188-1.172-.516-1.688-.891l-2.484 1.031c-.234.094-.469.047-.609-.188L2.343 15.281c-.141-.234-.094-.516.094-.656l2.109-1.641c-.047-.328-.094-.656-.094-.984s.047-.656.094-.984L2.437 9.375c-.188-.141-.234-.422-.094-.656l2.016-3.469c.141-.234.375-.281.609-.188l2.484 1.031c.516-.375 1.078-.703 1.688-.891l.375-2.672C9.562 2.297 9.75 2.109 9.984 2.109h4.031c.234 0 .422.188.469.422l.375 2.672c.609.188 1.172.516 1.688.891l2.484-1.031c.234-.094.469-.047.609-.188l2.016 3.469c.141.234.094.516-.094.656l-2.109 1.641c.047.328.094.656.094.984s-.047.656-.094.984z"/>
-                    </svg>
-                  </button>
-                  <label className={styles.switch}>
-                    <input 
-                      type="checkbox" 
-                      checked={plugin.enabled}
-                      onChange={() => onToggle(plugin.id)} 
-                    />
-                    <span className={`${styles.slider} ${styles.round}`}></span>
-                  </label>
-                </div>
-                {expandedPlugin === plugin.id && (
-                  <div className={styles.pluginSettings}>
-                    <div className={styles.promptSection}>
-                      <label className={styles.promptLabel}>프롬프트 설정</label>
-                      <p className={styles.promptHelp}>
-                        {'{text}'} 부분이 선택된 텍스트로 치환됩니다.
-                      </p>
-                      <textarea
-                        className={styles.promptInput}
-                        value={promptChanges[plugin.id]}
-                        onChange={(e) => handlePromptChange(plugin.id, e.target.value)}
-                        rows={4}
-                        placeholder="프롬프트를 입력하세요..."
-                      />
-                      <div className={styles.promptActions}>
-                        <button 
-                          className={`${styles.btn} ${styles.btnSecondary}`}
-                          onClick={() => resetPrompt(plugin.id)}
-                        >
-                          기본값으로 재설정
-                        </button>
-                        <button 
-                          className={`${styles.btn} ${styles.btnPrimary}`}
-                          onClick={() => savePrompt(plugin.id)}
-                        >
-                          저장
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </li>
-            ))}
-          </ul>
+          <GeneralSettings
+            isActive={isActive}
+            activationMode={activationMode}
+            onActiveChange={updateActiveState}
+            onModeChange={updateActivationMode}
+          />
         )}
       </main>
 
-      <footer className={styles.settingsFooter}>
-        <span className={styles.separator}>문의</span>
-      </footer>
+      <section className={styles.settingsSection}>
+        <h2>플러그인 설정</h2>
+      </section>
+      <main className={styles.settingsMain}>
+        {loading ? (
+          <LoadingSpinner text="플러그인을 불러오는 중" />
+        ) : (
+          <PluginList
+            plugins={plugins}
+            expandedPlugin={expandedPlugin}
+            promptChanges={promptChanges}
+            onToggle={onToggle}
+            onExpand={toggleExpanded}
+            onPromptChange={handlePromptChange}
+            onSavePrompt={savePrompt}
+            onResetPrompt={resetPrompt}
+            getPluginIcon={getPluginIcon}
+            shortcuts={shortcuts}
+            settingShortcutFor={settingShortcutFor}
+            onSetShortcut={handleSetShortcut}
+            onShortcutChange={handleShortcutChange}
+            onClearShortcut={handleClearShortcut}
+            onStopSettingShortcut={handleStopSettingShortcut}
+          />
+        )}
+      </main>
     </div>
   );
 }

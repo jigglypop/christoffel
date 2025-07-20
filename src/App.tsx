@@ -1,13 +1,18 @@
 import { useEffect } from 'react';
-import './App.css';
 import './font.module.css'
 
 function App() {
   useEffect(() => {
     if (process.env.NODE_ENV === 'development') {
+      import('./App.css');
       import('./content').catch(() => {});
     }
   }, []);
+
+  if (process.env.NODE_ENV !== 'development') {
+    return null;
+  }
+
   return (
    <div className="App">
     <header className="App-header">

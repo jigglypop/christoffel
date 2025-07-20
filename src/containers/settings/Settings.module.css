@@ -357,14 +357,12 @@ input:checked + .slider:before {
 
 /* Footer */
 .settings-footer {
-  padding: 16px;
   background: #242424;
   border-top: 1px solid #333;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  font-size: 12px;
+  font-size: 8px;
 }
 
 .footer-link {

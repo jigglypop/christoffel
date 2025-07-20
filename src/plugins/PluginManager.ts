@@ -25,6 +25,10 @@ class PluginManager {
   }
 
   async loadState() {
+    if (!chrome?.storage?.sync) {
+      console.warn('chrome.storage.sync is not available. Skipping state load.');
+      return;
+    }
     try {
       const storage = await chrome.storage.sync.get(['plugin_states', 'plugin_prompts']);
       const states = storage.plugin_states || {};
@@ -44,8 +48,12 @@ class PluginManager {
   }
 
   async saveState() {
+    if (!chrome?.storage?.sync) {
+      console.warn('chrome.storage.sync is not available. Skipping state save.');
+      return;
+    }
     const states: { [key: string]: boolean } = {};
-    const prompts: { [key: string]: string } = {};
+    const prompts: { [key:string]: string } = {};
     
     for (const [id, plugin] of this.plugins.entries()) {
       states[id] = plugin.enabled;

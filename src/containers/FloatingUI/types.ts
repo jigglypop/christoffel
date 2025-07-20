@@ -1,11 +1,9 @@
-export type Message = {
-    id: string
-    role: 'user' | 'assistant'
-    content: string
-    timestamp: Date
-}
-export interface APISettings {
-    modelType: 'openai' | 'claude' | 'custom';
-    endpoint: string;
-    apiKey: string;
+import type { FeatureResult } from '../../types/features';
+
+export interface FloatingUIProps {
+  selectedText: string;
+  onClose: () => void;
+  onExecutePlugin: (pluginId: string, text: string) => Promise<FeatureResult>;
+  activeElement?: HTMLInputElement | HTMLTextAreaElement | null;
+  selectionWidth?: number;
 }

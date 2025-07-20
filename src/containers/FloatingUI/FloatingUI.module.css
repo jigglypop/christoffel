@@ -291,32 +291,6 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.selectedTextContainer {
-  display: none; /* 선택된 텍스트는 표시하지 않음 */
-}
-
-.selectedText {
-  font-size: 12px;
-  color: #ccc;
-  margin: 0;
-  line-height: 1.4;
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-
-.floatingContainer[data-theme="light"] .selectedTextContainer {
-  background: rgba(255, 255, 255, 0.3);
-  border-color: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-}
-
-.floatingContainer[data-theme="light"] .selectedText {
-  color: #333;
-}
-
-
-
 .floatingBtn {
   width: 28px;
   height: 28px;
@@ -355,8 +329,6 @@
   height: 14px;
 }
 
-
-
 .loading {
   text-align: center;
   opacity: 0.6;
@@ -382,37 +354,20 @@
 }
 
 .actionBtn {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 4px;
   padding: 4px 8px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
+  border: none;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.2);
   color: inherit;
+  font-size: 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .actionBtn:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: translateY(-1px);
-}
-
-.floatingContainer[data-theme="light"] .resultActions {
-  border-top-color: rgba(255, 255, 255, 0.3);
-}
-
-.floatingContainer[data-theme="light"] .actionBtn {
-  background: rgba(255, 255, 255, 0.3);
-  border-color: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-}
-
-.floatingContainer[data-theme="light"] .actionBtn:hover {
-  background: rgba(255, 255, 255, 0.5);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.4);
+  border-color: rgba(255, 255, 255, 0.5);
 }
 
 /* 스크롤바 스타일링 */

@@ -1,0 +1,63 @@
+.resultArea {
+  border-radius: 4px;
+  padding: 6px 8px;
+  max-height: 150px;
+  overflow-y: auto;
+  font-size: 12px;
+  line-height: 1.4;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  margin: 4px;
+  margin-top: 0;
+  min-width: 172px;
+  box-sizing: border-box;
+}
+
+.resultContent {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.loading {
+  text-align: center;
+  opacity: 0.6;
+  font-size: 12px;
+}
+
+.error {
+  color: #ff6b6b;
+  font-size: 12px;
+}
+
+.resultText {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.resultActions {
+  display: flex;
+  gap: 4px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.actionBtn {
+  padding: 4px 8px;
+  border: none;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.2);
+  color: inherit;
+  font-size: 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.actionBtn:hover {
+  background: rgba(255, 255, 255, 0.4);
+  border-color: rgba(255, 255, 255, 0.5);
+} 

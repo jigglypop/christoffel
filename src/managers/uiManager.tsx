@@ -43,6 +43,7 @@ export function createFloatingUI(selection: SelectionInfo) {
   floatingUIContainer.id = 'christoffel-floating-ui';
   floatingUIContainer.className = styles.floatingUI;
   floatingUIContainer.style.position = 'fixed';
+  floatingUIContainer.style.zIndex = '2147483647';
 
   if (selection.size) {
     floatingUIContainer.style.width = `${selection.size.width}px`;
@@ -64,7 +65,9 @@ export function createFloatingUI(selection: SelectionInfo) {
 
   const currentActiveEl = document.activeElement;
 
-  if (currentActiveEl && (currentActiveEl.tagName === 'INPUT' || currentActiveEl.tagName === 'TEXTAREA')) {
+  if (selection.mousePosition) {
+    store.set(floatingPositionAtom, { x: selection.mousePosition.x, y: selection.mousePosition.y });
+  } else if (currentActiveEl && (currentActiveEl.tagName === 'INPUT' || currentActiveEl.tagName === 'TEXTAREA')) {
     const elRect = currentActiveEl.getBoundingClientRect();
     const left = elRect.left;
     const bottomY = elRect.bottom + 4;

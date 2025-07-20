@@ -1,0 +1,42 @@
+.settingsHeader {
+  padding: 10px;
+  background: linear-gradient(135deg, #292929 0%, #1e1e1e 100%);
+}
+
+.headerContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.logoSection {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.logo svg {
+  width: 36px;
+  height: 36px;
+}
+
+.titleSection {
+  display: flex;
+  flex-direction: column;
+}
+
+.titleSection h1 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #f2f2f2;
+}
+
+.version {
+  font-size: 12px;
+  color: #868e96;
+  font-weight: 500;
+  margin-top: 2px;
+} 

@@ -1,0 +1,142 @@
+.generalSettings {
+  background-color: #f8f9fa;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+
+.settingItem {
+  margin-bottom: 20px;
+}
+
+.settingItem:last-child {
+  margin-bottom: 0;
+}
+
+.settingHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.settingLabel {
+  font-weight: 600;
+  font-size: 14px;
+  color: #495057;
+}
+
+.settingDescription {
+  font-size: 12px;
+  color: #868e96;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+  margin: 0;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ced4da;
+  transition: .3s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .3s;
+}
+
+input:checked + .slider {
+  background-color: #5A67D8;
+}
+
+input:checked + .slider:before {
+  transform: translateX(20px);
+}
+
+.round {
+  border-radius: 24px;
+}
+
+.round:before {
+  border-radius: 50%;
+}
+
+.radioGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.radioItem {
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  background-color: white;
+}
+
+.radioItem:hover {
+  border-color: #5A67D8;
+  background-color: #f8f9ff;
+}
+
+.radioItem input[type="radio"] {
+  margin: 0;
+  margin-right: 8px;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.radioLabel {
+  font-weight: 500;
+  font-size: 14px;
+  color: #495057;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.radioDescription {
+  font-size: 12px;
+  color: #868e96;
+  margin-top: 4px;
+  margin-left: 20px;
+  line-height: 1.4;
+}
+
+.radioItem input[type="radio"]:checked ~ .radioLabel {
+  color: #5A67D8;
+}
+
+.radioItem:has(input[type="radio"]:checked) {
+  border-color: #5A67D8;
+  background-color: #f8f9ff;
+} 
