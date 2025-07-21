@@ -10,15 +10,15 @@
 
 .header h3 {
   margin: 0 0 8px 0;
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 600;
-  color: #343a40;
+  color: #ffffff;
 }
 
 .description {
   margin: 0;
-  font-size: 14px;
-  color: #6c757d;
+  font-size: 16px;
+  color: #a1a1a1;
   line-height: 1.5;
 }
 

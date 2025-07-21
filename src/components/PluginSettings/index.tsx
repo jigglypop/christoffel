@@ -44,9 +44,7 @@ export const PluginSettings: React.FC<PluginSettingsProps> = ({
           </button>
         </div>
       </div>
-
       <div className={styles.divider}></div>
-
       <div className={styles.shortcutSection}>
         <label className={styles.shortcutLabel}>단축키 설정</label>
         {isSettingShortcut ? (

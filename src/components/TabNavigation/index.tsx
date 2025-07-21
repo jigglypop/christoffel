@@ -13,9 +13,9 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({
   onTabChange,
 }) => {
   const tabs = [
-    { id: 'general' as TabType, label: '일반 설정', icon: '⚙️' },
-    { id: 'plugins' as TabType, label: '플러그인', icon: '🔧' },
-    { id: 'shortcuts' as TabType, label: '단축키', icon: '⌨️' },
+    { id: 'general' as TabType, label: '일반 설정', icon: '' },
+    { id: 'plugins' as TabType, label: '플러그인', icon: '' },
+    { id: 'shortcuts' as TabType, label: '단축키', icon: '' },
   ];
 
   return (
@@ -27,7 +27,6 @@ export const TabNavigation: React.FC<TabNavigationProps> = ({
             className={`${styles.tab} ${activeTab === tab.id ? styles.active : ''}`}
             onClick={() => onTabChange(tab.id)}
           >
-            <span className={styles.tabIcon}>{tab.icon}</span>
             <span className={styles.tabLabel}>{tab.label}</span>
           </button>
         ))}

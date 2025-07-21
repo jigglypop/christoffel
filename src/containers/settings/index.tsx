@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import styles from './Settings.module.css';
 import { useSettingsState } from '../../hooks/useSettingsState';
 import { usePluginSettings } from '../../hooks/usePluginSettings';
